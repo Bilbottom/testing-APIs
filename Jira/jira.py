@@ -1,0 +1,135 @@
+"""
+Class to facilitate working with the Jira API
+    * https://developer.atlassian.com/cloud/jira/platform/rest/v3/intro/
+
+Note that:
+    * the KEY should be your email address for your Atlassian account
+    * the SECRET should be a token that you generate for your Atlassian account
+        * https://id.atlassian.com/manage-profile/security/api-tokens
+"""
+import base64
+import json
+import os
+
+import requests
+from dotenv import load_dotenv
+
+
+load_dotenv(dotenv_path=r'.env')
+KEY = os.getenv('KEY')
+SECRET = os.getenv('SECRET')
+
+
+class JiraConnector(object):
+    def __init__(self):
+        self.base_url = 'https://billiam.atlassian.net/rest/api/3/'
+        self._api_key = KEY
+        self._api_secret = SECRET
+
+    @property
+    def auth_basic(self) -> str:
+        """
+        Encode the key and secret following the Atlassian documentation
+            https://developer.atlassian.com/cloud/jira/platform/basic-auth-for-rest-apis/#supply-basic-auth-headers
+        """
+        return 'Basic ' + base64.b64encode(f'{self._api_key}:{self._api_secret}'.encode('UTF-8')).decode()
+
+    @property
+    def request_headers(self) -> dict:
+        """Set up the default headers into a dictionary"""
+        return {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Authorization': self.auth_basic
+        }
+
+    def get_projects_paginated(self) -> requests.Response:
+        """
+        https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-projects/#api-rest-api-3-project-search-get
+        """
+        endpoint = 'project/search'
+        return requests.request(
+            method='GET',
+            url=self.base_url + endpoint,
+            headers=self.request_headers,
+            params={'maxResults': 50}
+        )
+
+    def get_issue(self, issue_key: str) -> requests.Response:
+        """
+        https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-issues/#api-rest-api-3-issue-issueidorkey-get
+        """
+        endpoint = f'issue/{issue_key}'
+        return requests.request(
+            method='GET',
+            url=self.base_url + endpoint,
+            headers=self.request_headers,
+            data={}
+        )
+
+    def get_project_components(self, project_id: str) -> requests.Response:
+        """
+        https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-project-components/#api-rest-api-3-project-projectidorkey-components-get
+        """
+        endpoint = f'project/{project_id}/components'
+        return requests.request(
+            method='GET',
+            url=self.base_url + endpoint,
+            headers=self.request_headers,
+            data={}
+        )
+
+    def create_issue(self, project_id: str, summary: str, description: str) -> requests.Response:
+        """
+        https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-issues/#api-rest-api-3-issue-post
+
+        For help with Jira IDs, either use the corresponding GET method, or see:
+            https://jaja.atlassian.net/wiki/spaces/AO/pages/2441904132/Jira+API+Guide
+        """
+        endpoint = 'issue'
+        payload = json.dumps({
+            'update': {},
+            'fields': {
+                'summary': summary,
+                'issuetype': {
+                    'id': '10001'  # Task
+                },
+                # 'components': [
+                #     {
+                #         'id': '10114'  # Analytics
+                #     }
+                # ],
+                'project': {
+                    'id': project_id
+                },
+                'description': {
+                    'type': 'doc',
+                    'version': 1,
+                    'content': [
+                        {
+                            'type': 'paragraph',
+                            'content': [
+                                {
+                                    'text': description,
+                                    'type': 'text'
+                                }
+                            ]
+                        }
+                    ]
+                },
+                # 'priority': {
+                #     'id': '3'  # P3 - Medium
+                # },
+                'labels': [],
+                'duedate': None,  # eg '2022-01-01'
+                # 'assignee': {
+                #     'id': None  # Unassigned
+                # }
+            }
+        })
+        return requests.request(
+            method='POST',
+            url=self.base_url + endpoint,
+            headers=self.request_headers,
+            data=payload
+        )
