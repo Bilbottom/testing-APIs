@@ -44,4 +44,4 @@ def test_companies_house_connector():
 
 
 if __name__ == '__main__':
-    test_company_house_connector()
+    test_companies_house_connector()
