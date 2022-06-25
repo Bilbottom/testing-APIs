@@ -1,6 +1,6 @@
 import json
 
-from company_house import CompanyHouseConnector
+from companies_house import CompaniesHouseConnector
 
 
 def pprint(json_text: str or dict):
@@ -20,8 +20,8 @@ def pprint(json_text: str or dict):
         print(json_text)
 
 
-def test_company_house_connector():
-    ch_conn = CompanyHouseConnector()
+def test_companies_house_connector():
+    ch_conn = CompaniesHouseConnector()
 
     # Test the error message
     # pprint(ch_conn.get_company_profile(company_number='2933452').text)

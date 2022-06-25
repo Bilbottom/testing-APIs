@@ -1,7 +1,7 @@
 """
-Class to facilitate working with the Company House API
+Class to facilitate working with the Companies House API
     * https://developer.company-information.service.gov.uk/
-Note that the authentication is controlled by setting up an application in Company House
+Note that the authentication is controlled by setting up an application in Companies House
 """
 import os
 import base64
@@ -24,7 +24,7 @@ class CompanyNumberValueError(Exception):
         )
 
 
-class CompanyHouseConnector(object):
+class CompaniesHouseConnector(object):
     def __init__(self):
         self.base_url = 'https://api.company-information.service.gov.uk/'
         self.__api_key = os.environ['API-Token']
@@ -32,7 +32,7 @@ class CompanyHouseConnector(object):
     @property
     def auth_basic(self) -> str:
         """
-        Encode the key following the Company House documentation (HTTP basic authentication, RFC2617)
+        Encode the key following the Companies House documentation (HTTP basic authentication, RFC2617)
             https://developer-specs.company-information.service.gov.uk/guides/authorisation
         """
         return 'Basic ' + base64.b64encode(f'{self.__api_key}:'.encode('UTF-8')).decode()
