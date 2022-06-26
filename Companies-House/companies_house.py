@@ -1,123 +1,66 @@
-"""
-Class to facilitate working with the Companies House API
-    * https://developer.company-information.service.gov.uk/
-Note that the authentication is controlled by setting up an application in Companies House
-"""
-import os
-import base64
+import json
 
-import requests
-from dotenv import load_dotenv
-
-load_dotenv('.env')
+from companies_house_connector import CompaniesHouseConnector
 
 
-class CompanyNumberValueError(Exception):
-    """
-    Custom error class for Company Number value errors. Saves having to copy-and-paste the error text.
-    https://www.seanh.cc/2019/06/20/python-custom-exception-classes/
-    """
-    def __init__(self, company_number):
-        super().__init__(
-            f'The company number must be exactly 8 characters long and include the leading 0.'
-            f' The company number {company_number} is invalid'
-        )
+class Company(object):
+    def __init__(self, company_number: str or int, validate_company_number_on_init: bool = True):
+        self._connector: CompaniesHouseConnector = CompaniesHouseConnector()
+        self._company_number = company_number
+        self._company_profile: dict or None = None
+        self._company_officers: list[dict] or None = None
 
+        if validate_company_number_on_init:
+            self.set_company_number()
 
-class CompaniesHouseConnector(object):
-    def __init__(self):
-        self.base_url = 'https://api.company-information.service.gov.uk/'
-        self.__api_key = os.environ['API-Token']
+    def set_company_number(self):
+        self._company_number = self.get_company_profile()['company_number']
 
     @property
-    def auth_basic(self) -> str:
-        """
-        Encode the key following the Companies House documentation (HTTP basic authentication, RFC2617)
-            https://developer-specs.company-information.service.gov.uk/guides/authorisation
-        """
-        return 'Basic ' + base64.b64encode(f'{self.__api_key}:'.encode('UTF-8')).decode()
+    def company_number(self) -> str or int:
+        return self._company_number
 
-    @property
-    def request_headers(self) -> dict:
-        """Set up the default headers into a dictionary"""
-        return {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'Authorization': self.auth_basic
-        }
+    def get_company_profile(self, force_update: bool = False, suppress_errors: bool = False) -> dict:
+        """Get the profile of the company"""
+        if force_update or self._company_profile is None:
+            company_profile = self._connector.get_company_profile(
+                company_number=self.company_number,
+                suppress_company_error=suppress_errors
+            )
+            if not suppress_errors and company_profile.status_code == 404:
+                raise ValueError(f'Company number {self.company_number} not found')
+            self._company_profile = json.loads(company_profile.text)
+        return self._company_profile
 
-    @staticmethod
-    def format_company_number(company_number: str or int) -> str:
-        """
-        Format a company number into something that the Companies House AIP recognises.
-        This is currently a simple implementation, but wrapping it into its own method in case it gets more complicated.
-        For example, the Scottish company number start with an SC
-        """
-        return str(company_number).zfill(8)
-
-    def get_company_profile(self, company_number: str or int, suppress_error: bool = False) -> requests.Response:
-        """
-        https://developer-specs.company-information.service.gov.uk/companies-house-public-data-api/reference/company-profile/company-profile
-        """
-        if not suppress_error and len(company_number) != 8:
-            raise CompanyNumberValueError(company_number)
-
-        endpoint = f'company/{self.format_company_number(company_number)}'
-        return requests.request(
-            method='GET',
-            url=self.base_url + endpoint,
-            headers=self.request_headers
-        )
-
-    def get_company_officers(self, company_number: str or int, suppress_error: bool = False) -> requests.Response:
-        """
-        https://developer-specs.company-information.service.gov.uk/companies-house-public-data-api/reference/officers/list
-        """
-        if not suppress_error and len(company_number) != 8:
-            raise CompanyNumberValueError(company_number)
-
-        endpoint = f'company/{self.format_company_number(company_number)}/officers'
-        return requests.request(
-            method='GET',
-            url=self.base_url + endpoint,
-            headers=self.request_headers
-        )
-
-    def search(self, q: str, items_per_page: int = 20, start_index: int = 0) -> requests.Response:
-        """
-        https://developer-specs.company-information.service.gov.uk/companies-house-public-data-api/reference/search
-        """
-        endpoint = f'search?{q=}&{items_per_page=}&{start_index=}'
-        return requests.request(
-            method='GET',
-            url=self.base_url + endpoint,
-            headers=self.request_headers
-        )
-
-    def search_company(
+    def get_company_officers(
         self,
-        q: str,
-        items_per_page: int = 20,
-        start_index: int = 0,
-        restrictions: str = ''
-    ) -> requests.Response:
-        """
-        https://developer-specs.company-information.service.gov.uk/companies-house-public-data-api/reference/search/search-companies
-        """
-        endpoint = f'search/companies?{q=}&{items_per_page=}&{start_index=}&{restrictions=}'
-        return requests.request(
-            method='GET',
-            url=self.base_url + endpoint,
-            headers=self.request_headers
-        )
-
-    def search_officers(self, q: str, items_per_page: int = 20, start_index: int = 0) -> requests.Response:
-        """
-        https://developer-specs.company-information.service.gov.uk/companies-house-public-data-api/reference/search/search-officers
-        """
-        endpoint = f'search/officers?{q=}&{items_per_page=}&{start_index=}'
-        return requests.request(
-            method='GET',
-            url=self.base_url + endpoint,
-            headers=self.request_headers
-        )
+        force_update: bool = False,
+        page_size: int = 100,
+        suppress_errors: bool = False
+    ) -> dict:
+        """Enumerate through all pages to retrieve the full list of officers"""
+        if force_update or self._company_officers is None:
+            enumerated_items = 0
+            self._company_officers = []
+            total_items = json.loads(
+                self._connector.get_company_officers(
+                    company_number=self.company_number,
+                    items_per_page=1,
+                    suppress_company_error=suppress_errors
+                ).text
+            )['total_results']
+            while enumerated_items < total_items:
+                self._company_officers += json.loads(
+                    self._connector.get_company_officers(
+                        company_number=self.company_number,
+                        items_per_page=page_size,
+                        start_index=enumerated_items,
+                        suppress_company_error=suppress_errors
+                    ).text
+                )['items']
+                enumerated_items += page_size
+            for officer in self._company_officers:
+                appointments = officer['links']['officer']['appointments']
+                # officer['id'] = appointments[10:-12]  # Not sure if it's always a specific position/length
+                officer['officer_id'] = appointments.replace('/officers/', '').replace('/appointments', '')
+        return self._company_officers
