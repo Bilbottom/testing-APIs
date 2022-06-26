@@ -3,24 +3,8 @@ Testing the MetabaseConnector class defined in metabase.py
 """
 import json
 
+from utils import pprint
 from metabase import MetabaseConnector
-
-
-def pprint(json_text: str or dict):
-    if type(json_text) is str:
-        json_text = json.loads(json_text)
-
-    try:
-        print(
-            json.dumps(
-                json_text,
-                sort_keys=True,
-                indent=4,
-                separators=(',', ': ')
-            )
-        )
-    except TypeError:
-        print(json_text)
 
 
 def list_databases(mb_connector: MetabaseConnector):

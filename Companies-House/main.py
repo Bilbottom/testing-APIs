@@ -1,24 +1,9 @@
 import json
 
+import pandas as pd
+
+from utils import pprint, print_dict_types
 from companies_house import CompaniesHouseConnector
-
-
-def pprint(json_text: str or dict, indent: int = 4):
-    """Pretty print JSON/dict objects"""
-    if type(json_text) is str:
-        json_text = json.loads(json_text)
-
-    try:
-        print(
-            json.dumps(
-                json_text,
-                sort_keys=True,
-                indent=indent,
-                separators=(',', ': ')
-            )
-        )
-    except TypeError:
-        print(json_text)
 
 
 def test_companies_house_connector():
@@ -45,15 +30,42 @@ def test_companies_house_connector():
     # pprint(ch_conn.search(q='John', items_per_page=10).text)
 
 
+class Company(object):
+    def __init__(self, company_number: str or int):
+        self._connector: CompaniesHouseConnector = CompaniesHouseConnector()
+        self._company_number = company_number
+        self._company_profile: dict or None = None
+        self._company_officers: dict or None = None
+
+    @property
+    def company_number(self) -> str or int:
+        return self._company_number
+
+    @property
+    def company_profile(self, force_update: bool = False) -> dict:
+        if force_update or self._company_profile is None:
+            self._company_profile = json.loads(
+                self._connector.get_company_profile(company_number=self.company_number).text
+            )
+        return self._company_profile
+
+    @property
+    def company_officers(self, force_update: bool = False) -> dict:
+        if force_update or self._company_officers is None:
+            self._company_officers = json.loads(
+                self._connector.get_company_officers(company_number=self.company_number).text
+            )
+        return self._company_officers
+
+
 def test_get_company_profile_and_officers():
     """Sample method to get an idea of what properties to push into a database"""
-    allica_bank = '07706156'
-    ch_conn = CompaniesHouseConnector()
-    profile = ch_conn.get_company_profile(company_number=allica_bank).text
-    officers = ch_conn.get_company_officers(company_number=allica_bank).text
+    allica_bank = Company(company_number='07706156')
+    company_profile = allica_bank.company_profile
+    pprint(company_profile)
+    # pprint(allica_bank.company_officers)
 
-    pprint(profile)
-    pprint(officers)
+    print_dict_types(dictionary=company_profile)
 
 
 if __name__ == '__main__':

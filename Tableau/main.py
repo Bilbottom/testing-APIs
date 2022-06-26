@@ -3,21 +3,8 @@ Testing the TableauConnector class defined in tableau.py
 """
 import json
 
+from utils import pprint
 from tableau import TableauConnector
-
-
-def pprint(json_text: str or dict):
-    if type(json_text) is str:
-        json_text = json.loads(json_text)
-
-    print(
-        json.dumps(
-            json_text,
-            sort_keys=True,
-            indent=4,
-            separators=(',', ': ')
-        )
-    )
 
 
 def change_objects_owner(tableau_connector: TableauConnector):

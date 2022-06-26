@@ -3,21 +3,8 @@ Testing the ConfluenceConnector class defined in confluence.py
 """
 import json
 
+from utils import pprint
 from confluence import ConfluenceConnector
-
-
-def pprint(json_text: str or dict):
-    if type(json_text) is str:
-        json_text = json.loads(json_text)
-
-    print(
-        json.dumps(
-            json_text,
-            sort_keys=True,
-            indent=4,
-            separators=(',', ': ')
-        )
-    )
 
 
 def get_space_details():
