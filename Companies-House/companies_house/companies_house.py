@@ -38,7 +38,10 @@ class Company(object):
         page_size: int = 100,
         suppress_errors: bool = False
     ) -> dict:
-        """Enumerate through all pages to retrieve the full list of officers"""
+        """
+        Enumerate through all pages to retrieve the full list of officers
+        TODO: Split this into smaller methods and introduce an Officer class (maybe)
+        """
         if force_update or self._company_officers is None:
             enumerated_items = 0
             self._company_officers = []
