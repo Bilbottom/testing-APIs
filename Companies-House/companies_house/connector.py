@@ -11,11 +11,11 @@ from typing import Any
 import requests
 from dotenv import load_dotenv
 
-from company_house_utils.enums import OfficerRegisterType, OfficerOrderBy
-from company_house_utils.exceptions import CompanyNumberValueError
-# from company_house_utils.decorators import http_request
+from .utils.enums import OfficerRegisterType, OfficerOrderBy
+from .utils.exceptions import CompanyNumberValueError
+# from .utils.decorators import http_request
 
-load_dotenv('.env')
+load_dotenv('companies_house/.env')
 
 
 class CompaniesHouseConnector(object):
@@ -211,3 +211,27 @@ class CompaniesHouseConnector(object):
             url=self.base_url + endpoint,
             headers=self.request_headers
         )
+
+
+if __name__ == '__main__':
+    """Test the Companies House connector class"""
+    ch_conn = CompaniesHouseConnector()
+
+    # Test the error message
+    print(ch_conn.get_company_profile(company_number='7706156').text)
+
+    # Test 2 ways of getting the company profile
+    print(ch_conn.get_company_profile(company_number='07706156').text)
+    print(ch_conn.get_company_profile(company_number=7706156, suppress_company_error=True).text)
+
+    # Test getting the company officers
+    print(ch_conn.get_company_officers(company_number=7706156, suppress_company_error=True).text)
+
+    # Test the company search
+    print(ch_conn.search_company(q='Allica', items_per_page=2).text)
+
+    # Test the officer search
+    # print(ch_conn.search_officers(q='John', items_per_page=2).text)
+
+    # Test the search
+    # print(ch_conn.search(q='John', items_per_page=10).text)

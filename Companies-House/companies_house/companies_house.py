@@ -1,6 +1,6 @@
 import json
 
-from companies_house_connector import CompaniesHouseConnector
+from .connector import CompaniesHouseConnector
 
 
 class Company(object):
