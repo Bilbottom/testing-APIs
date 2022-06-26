@@ -1,5 +1,4 @@
 *credentials.py
-*/.env
+*.env
 /Slack-Work/token.txt
 /Metabase/Metabase - Shortcut.lnk
-/Companies-House/companies_house/.env
