@@ -4,7 +4,10 @@ https://developers.notion.com/
 import notion
 
 
-def main():
+def main() -> None:
+    """
+    Test the ``NotionConnector`` class.
+    """
     notion_connector = notion.NotionConnector()
     print(notion_connector.get_users().text)
 

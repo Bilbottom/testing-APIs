@@ -1,3 +1,4 @@
+*.idea
 *credentials.py
 *.env
 /Slack-Work/token.txt

@@ -1,34 +1,40 @@
 """
-Class to facilitate working with the Metabase API
-    * https://www.metabase.com/docs/v0.41/api-documentation.html
+Class to facilitate working with the Metabase API:
+
+- https://www.metabase.com/docs/v0.41/api-documentation.html
 
 Note that:
-    * the KEY should be your username for your Metabase account
-    * the SECRET should be your password for your Metabase account
+
+- the ``KEY`` should be your username for your Metabase account
+- the ``SECRET`` should be your password for your Metabase account
 """
 import contextlib
-import json
 import os
 
+import json
 import requests
 from dotenv import load_dotenv
 
 
-load_dotenv(dotenv_path=r'.env')
-KEY = os.getenv('KEY')
-SECRET = os.getenv('SECRET')
+load_dotenv(dotenv_path=r".env")
 
 
 class MetabaseConnector(object):
+    """
+    Bridge between Python and the Metabase REST API.
+    """
     def __init__(self):
-        self.base_url = 'http://localhost:3000/api/'
-        self.__api_key = KEY
-        self.__api_secret = SECRET
+        """
+        Create the connector.
+        """
+        self.base_url = "http://localhost:3000/api/"
+        self.__api_key = os.getenv("KEY")
+        self.__api_secret = os.getenv("SECRET")
         self.__auth_token = None
 
         sign_in_response = self.sign_in()
         # print(sign_in_response.text)
-        self.__auth_token = json.loads(sign_in_response.text)['id']
+        self.__auth_token = json.loads(sign_in_response.text)["id"]
 
     def __del__(self):
         with contextlib.suppress(ImportError):
@@ -36,22 +42,24 @@ class MetabaseConnector(object):
 
     @property
     def auth_token(self) -> str:
-        """Make auth_token immutable"""
+        """Make auth_token immutable."""
         return self.__auth_token
 
     @property
     def request_headers(self) -> dict:
-        """Set up the default headers into a dictionary"""
+        """
+        Set up the default headers into a dictionary.
+        """
         if self.auth_token is None:
             return {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
+                "Content-Type": "application/json",
+                "Accept": "application/json"
             }
         else:
             return {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'X-Metabase-Session': self.auth_token
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+                "X-Metabase-Session": self.auth_token
             }
 
     ###
@@ -61,13 +69,13 @@ class MetabaseConnector(object):
         """
         https://www.metabase.com/docs/latest/api-documentation.html#post-apisession
         """
-        endpoint = 'session'
+        endpoint = "session"
         body = {
-            'username': self.__api_key,
-            'password': self.__api_secret
+            "username": self.__api_key,
+            "password": self.__api_secret
         }
         return requests.request(
-            method='POST',
+            method="POST",
             url=self.base_url + endpoint,
             headers=self.request_headers,
             data=json.dumps(body)
@@ -77,9 +85,9 @@ class MetabaseConnector(object):
         """
         https://www.metabase.com/docs/latest/api-documentation.html#delete-apisession
         """
-        endpoint = 'session'
+        endpoint = "session"
         return requests.request(
-            method='DELETE',
+            method="DELETE",
             url=self.base_url + endpoint,
             headers=self.request_headers
         )
@@ -91,9 +99,9 @@ class MetabaseConnector(object):
         """
         https://www.metabase.com/docs/v0.41/api-documentation.html#get-apidatabase
         """
-        endpoint = 'database'
+        endpoint = "database"
         return requests.request(
-            method='GET',
+            method="GET",
             url=self.base_url + endpoint,
             headers=self.request_headers
         )
@@ -102,9 +110,9 @@ class MetabaseConnector(object):
         """
         https://www.metabase.com/docs/v0.41/api-documentation.html#get-apidatabaseid
         """
-        endpoint = f'database/{database_id}'
+        endpoint = f"database/{database_id}"
         return requests.request(
-            method='GET',
+            method="GET",
             url=self.base_url + endpoint,
             headers=self.request_headers
         )
@@ -116,9 +124,9 @@ class MetabaseConnector(object):
         """
         https://www.metabase.com/docs/latest/api-documentation.html#get-apiusercurrent
         """
-        endpoint = 'user/current'
+        endpoint = "user/current"
         return requests.request(
-            method='GET',
+            method="GET",
             url=self.base_url + endpoint,
             headers=self.request_headers
         )

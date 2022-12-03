@@ -1,28 +1,29 @@
 """
-Following the documentation at
-    https://tableau.github.io/server-client-python/docs
+Following the documentation at:
 
-Dependencies
-    * TSC (Tableau Server Client)
-        pip install tableauserverclient
+- https://tableau.github.io/server-client-python/docs
 """
 
 import tableauserverclient as tsc
-# from credentials import PAT, UAP
 
 
 class TableauUser(object):
-    def __init__(self, key: str, secret: str, auth_type: str = 'pat'):
+    """
+    A user in the corresponding Tableau server.
+    """
+    def __init__(self, key: str, secret: str, auth_type: str = "pat"):
         """
-        Class to facilitate using the TSC package for administrative tasks on Tableau Server
+        Class to facilitate using the TSC package for administrative tasks on
+        Tableau Server.
 
-        :param key: the REST API key
-        :param secret: the REST API secret
-        :param auth_type: 'pat' for Personal Access Token and 'uap' for Username And Password
+        :param key: the REST API key.
+        :param secret: the REST API secret.
+        :param auth_type: 'pat' for Personal Access Token and 'uap' for Username
+         And Password.
         """
-        if auth_type.lower() == 'pat':
+        if auth_type.lower() == "pat":
             self._auth = tsc.PersonalAccessTokenAuth(key, secret)
-        elif auth_type.lower() == 'uap':
+        elif auth_type.lower() == "uap":
             self._auth = tsc.TableauAuth(key, secret)
         else:
             raise ValueError(
@@ -30,7 +31,7 @@ class TableauUser(object):
                 " 'pat' for Personal Access Token and 'uap' for Username And Password"
             )
 
-        self.server = tsc.Server(r'https://tableau.prod.jaja.finance', use_server_version=True)
+        self.server = tsc.Server(r"https://tableau.prod.jaja.finance", use_server_version=True)
         # self.server.auth.sign_in(self._auth)
 
     # def __del__(self):
