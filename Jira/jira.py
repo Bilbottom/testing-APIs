@@ -1,19 +1,22 @@
 """
-Class to facilitate working with the Jira API
+Class to facilitate working with the Jira API:
 
-    - https://developer.atlassian.com/cloud/jira/platform/rest/v3/intro/
+- https://developer.atlassian.com/cloud/jira/platform/rest/v3/intro/
 
 Note that:
 
-    - the KEY should be your email address for your Atlassian account
-    - the SECRET should be a token that you generate for your Atlassian account
-        - https://id.atlassian.com/manage-profile/security/api-tokens
+- the ``KEY`` should be your email address for your Atlassian account
+- the ``SECRET`` should be a token that you generate for your Atlassian account
+
+See the following documentation:
+
+- https://id.atlassian.com/manage-profile/security/api-tokens
 """
 import base64
-import json
 import os
 
 import requests
+import json
 from dotenv import load_dotenv
 
 
@@ -21,7 +24,13 @@ load_dotenv(dotenv_path=r"Jira/.env")
 
 
 class JiraConnector:
+    """
+    Bridge between Python and the Jira REST API.
+    """
     def __init__(self):
+        """
+        Create the connector.
+        """
         self.base_url = "https://billiam.atlassian.net/rest/api/3/"
         self._api_key = os.getenv("KEY")
         self._api_secret = os.getenv("SECRET")

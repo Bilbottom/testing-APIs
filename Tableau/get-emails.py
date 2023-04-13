@@ -1,15 +1,31 @@
 """
-Script for retrieving the list of emails for users on the server
+Script for retrieving the list of emails for users on the server.
 """
-from tableau import TableauConnector
 import json
+
+from tableau import TableauConnector
 
 
 def get_user_email_list(tableau_connector: TableauConnector) -> list:
-    user_list = json.loads(tableau_connector.get_users_on_site().text)['users']['user']
-    return [user['email'] for user in user_list if user['siteRole'] != 'Unlicensed']
+    """
+    Get the emails for the licenced users.
+    """
+    return [
+        user["email"]
+        for user in json.loads(tableau_connector.get_users_on_site().text)["users"]["user"]
+        if user["siteRole"] != "Unlicensed"
+    ]
 
 
-if __name__ == '__main__':
+def main() -> None:
+    """"""
     tableau_conn = TableauConnector()
-    [print(email) for email in get_user_email_list(tableau_conn) if email != 'tableau@jajafinance.com']
+    [
+        print(email)
+        for email in get_user_email_list(tableau_conn)
+        if email != "tableau@jajafinance.com"
+    ]
+
+
+if __name__ == "__main__":
+    main()

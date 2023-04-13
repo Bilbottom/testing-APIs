@@ -3,37 +3,43 @@ import json
 from rich import print
 
 
-def pprint(json_text: str or dict, indent: int = 4):
+def pprint(text: str | dict, indent: int = 4) -> None:
     """Pretty print JSON/dict objects"""
-    if type(json_text) is str:
-        json_text = json.loads(json_text)
+    if type(text) is str:
+        text = json.loads(text)
 
     try:
         print(
             json.dumps(
-                json_text,
+                text,
                 sort_keys=True,
                 indent=indent,
-                separators=(',', ': ')
+                separators=(",", ": ")
             )
         )
     except TypeError:
-        print(json_text)
+        print(text)
 
 
 def print_dict_types(dictionary: dict, level: int = 0) -> None:
-    """Loop through a dict and print the keys and the value types. List keys will be coloured red"""
-    indent = level * '    '
+    """
+    Loop through a dict and print the keys and the value types.
+
+    List keys will be coloured red.
+    """
+    indent = level * "    "
     for key, value in dictionary.items():
-        colour = 'red' if isinstance(value, list) else 'blue'
+        colour = "red" if isinstance(value, list) else "blue"
         print(f"{indent}{key} [italic {colour}]{type(value)}[/italic {colour}]")
         if isinstance(value, dict):
             print_dict_types(value, level=level + 1)
 
 
-def json_schema_to_sql():
-    """Loop through a dict and convert to SQL column names with types"""
-    def printer(dictionary: dict, parent: str or None = None):
+def json_schema_to_sql() -> None:
+    """
+    Loop through a dict and convert to SQL column names with types.
+    """
+    def printer(dictionary: dict, parent: str or None = None) -> None:
         for key, value in dictionary.items():
             if isinstance(value, dict):
                 printer(value, parent=key)
@@ -41,12 +47,12 @@ def json_schema_to_sql():
                 print(f"{key if parent is None else f'{parent}_{key}'} {sql_type[type(value)]},")
 
     sql_type = {
-        str: 'TEXT',
-        list: 'TEXT',
-        dict: 'BLOB',
-        int: 'INTEGER',
-        bool: 'INTEGER  /* BOOL */',
-        float: 'REAL'
+        str: "TEXT",
+        list: "TEXT",
+        dict: "BLOB",
+        int: "INTEGER",
+        bool: "INTEGER  /* BOOL */",
+        float: "REAL"
     }
-    with open('temp.json') as f:
+    with open("temp.json") as f:
         printer(json.loads(f.read()))
