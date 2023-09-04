@@ -17,7 +17,8 @@ def http_request(func: Callable) -> Callable:
     def http_handler(*args, **kwargs):
         ret: requests.Response = func(*args, **kwargs)
         print(ret.status_code)
-        if ret.status_code in [400, 401, 404]:
+        if ret.status_code in {400, 401, 404}:
             raise HTTPError(ret.status_code, ret.reason)
         return ret
+
     return http_handler
