@@ -3,27 +3,23 @@ Alternative API clients for Alteryx Gallery.
 """
 
 import math
-import os
 import re
 import time
 import uuid
 
-import dotenv
 import requests
-import oauthlib.oauth1
-
-dotenv.load_dotenv()
+from oauthlib.oauth1 import Client
 
 
-class GalleryConnector(object):
+class GalleryConnector:
     """
     Bridge class for the Alteryx Gallery REST API.
     """
 
-    def __init__(self):
-        self.base_url = "http://172.28.67.186/api/"
-        self._api_key = os.getenv("KEY")
-        self._api_secret = os.getenv("SECRET")
+    def __init__(self, base_url: str, api_key: str, api_secret: str):
+        self.base_url = base_url
+        self._api_key = api_key
+        self._api_secret = api_secret
 
     @property
     def oauth_timestamp(self) -> str:
@@ -63,13 +59,13 @@ class GalleryConnector(object):
         then parse out the oauth_signature value. This uses ``HMAC-SHA1`` by
         default.
         """
-        client = oauthlib.oauth1.Client(
+        client = Client(
             client_key=self._api_key,
             client_secret=self._api_secret,
         )
         return re.search(
             'oauth_signature="(.*)"',
-            client.sign("http://172.28.67.186/api")[1]["Authorization"],
+            client.sign(self.base_url)[1]["Authorization"],
         )[1]
 
     @property
@@ -93,15 +89,7 @@ class GalleryConnector(object):
             "Accept": "application/json",
             "Authorization": (
                 "OAuth "
-                + ",".join(
-                    [
-                        f'oauth_consumer_key="{self.oauth_consumer_key}"',
-                        f'oauth_signature_method="{self.oauth_signature_method}"',
-                        f'oauth_signature="{self.oauth_signature}"',
-                        f'oauth_timestamp="{self.oauth_timestamp}"',
-                        f'oauth_nonce="{self.oauth_nonce}"',
-                    ]
-                )
+                + ",".join([f'{k}="{v}"' for k, v in self.oauth_params.items()])
             ),
         }
 

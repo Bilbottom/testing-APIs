@@ -2,26 +2,21 @@
 API clients for Alteryx Gallery.
 """
 
-import os
-
-import dotenv
 import requests
 
 # extends `requests` to include OAuth 1.0a (One-Legged)
 from requests_oauthlib import OAuth1Session
 
-dotenv.load_dotenv()
 
-
-class GalleryConnector(object):
+class GalleryConnector:
     """
     Bridge class for the Alteryx Gallery REST API.
     """
 
-    def __init__(self):
-        self.base_url = "http://172.28.67.186/api/"
-        self._api_key = os.getenv("KEY")
-        self._api_secret = os.getenv("SECRET")
+    def __init__(self, base_url: str, api_key: str, api_secret: str):
+        self.base_url = base_url
+        self._api_key = api_key
+        self._api_secret = api_secret
 
     @property
     def request_headers(self) -> dict:

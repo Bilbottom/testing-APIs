@@ -4,3 +4,8 @@ rich>=13.9.4
 
 # dev
 pre-commit
+pytest
+pytest-cov
+
+# api-specific reqs
+-r src/apis/alteryx_gallery/requirements.txt
