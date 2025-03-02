@@ -1,7 +1,5 @@
 """
-Class to facilitate working with the Jira API:
-
-- https://developer.atlassian.com/cloud/jira/platform/rest/v3/intro/
+API clients for Jira.
 
 Note that:
 
@@ -12,21 +10,22 @@ See the following documentation:
 
 - https://id.atlassian.com/manage-profile/security/api-tokens
 """
+
 import base64
 import os
 
+import dotenv
 import requests
 import json
-from dotenv import load_dotenv
 
-
-load_dotenv(dotenv_path=r"Jira/.env")
+dotenv.load_dotenv(dotenv_path=r".env")
 
 
 class JiraConnector:
     """
-    Bridge between Python and the Jira REST API.
+    Bridge class for the Jira REST API.
     """
+
     def __init__(self):
         """
         Create the connector.
@@ -38,10 +37,16 @@ class JiraConnector:
     @property
     def auth_basic(self) -> str:
         """
-        Encode the key and secret following the Atlassian documentation
-            https://developer.atlassian.com/cloud/jira/platform/basic-auth-for-rest-apis/#supply-basic-auth-headers
+        Encode the key and secret following the Atlassian documentation:
+
+        - https://developer.atlassian.com/cloud/jira/platform/basic-auth-for-rest-apis/#supply-basic-auth-headers
         """
-        return "Basic " + base64.b64encode(f"{self._api_key}:{self._api_secret}".encode('UTF-8')).decode()
+        return (
+            "Basic "
+            + base64.b64encode(
+                f"{self._api_key}:{self._api_secret}".encode("UTF-8")
+            ).decode()
+        )
 
     @property
     def request_headers(self) -> dict:
@@ -49,7 +54,7 @@ class JiraConnector:
         return {
             "Content-Type": "application/json",
             "Accept": "application/json",
-            "Authorization": self.auth_basic
+            "Authorization": self.auth_basic,
         }
 
     def get_projects_paginated(self) -> requests.Response:
@@ -61,7 +66,7 @@ class JiraConnector:
             method="GET",
             url=self.base_url + endpoint,
             headers=self.request_headers,
-            params={"maxResults": 50}
+            params={"maxResults": 50},
         )
 
     def get_issue(self, issue_key: str) -> requests.Response:
@@ -73,7 +78,7 @@ class JiraConnector:
             method="GET",
             url=self.base_url + endpoint,
             headers=self.request_headers,
-            data={}
+            data={},
         )
 
     def get_project_components(self, project_id: str) -> requests.Response:
@@ -85,60 +90,58 @@ class JiraConnector:
             method="GET",
             url=self.base_url + endpoint,
             headers=self.request_headers,
-            data={}
+            data={},
         )
 
-    def create_issue(self, project_id: str, summary: str, description: str) -> requests.Response:
+    def create_issue(
+        self, project_id: str, summary: str, description: str
+    ) -> requests.Response:
         """
         https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-issues/#api-rest-api-3-issue-post
 
         For help with Jira IDs, either use the corresponding GET method, or see:
-            https://jaja.atlassian.net/wiki/spaces/AO/pages/2441904132/Jira+API+Guide
+
+        - https://jaja.atlassian.net/wiki/spaces/AO/pages/2441904132/Jira+API+Guide
         """
         endpoint = "issue"
-        payload = json.dumps({
-            "update": {},
-            "fields": {
-                "summary": summary,
-                "issuetype": {
-                    "id": "10001"  # Task
+        payload = json.dumps(
+            {
+                "update": {},
+                "fields": {
+                    "summary": summary,
+                    "issuetype": {
+                        "id": "10001"  # Task
+                    },
+                    # "components": [
+                    #     {
+                    #         "id": "10114"  # Analytics
+                    #     }
+                    # ],
+                    "project": {"id": project_id},
+                    "description": {
+                        "type": "doc",
+                        "version": 1,
+                        "content": [
+                            {
+                                "type": "paragraph",
+                                "content": [{"text": description, "type": "text"}],
+                            }
+                        ],
+                    },
+                    # "priority": {
+                    #     "id": "3"  # P3 - Medium
+                    # },
+                    "labels": [],
+                    "duedate": None,  # eg "2022-01-01"
+                    # "assignee": {
+                    #     "id": None  # Unassigned
+                    # },
                 },
-                # "components": [
-                #     {
-                #         "id": "10114"  # Analytics
-                #     }
-                # ],
-                "project": {
-                    "id": project_id
-                },
-                "description": {
-                    "type": "doc",
-                    "version": 1,
-                    "content": [
-                        {
-                            "type": "paragraph",
-                            "content": [
-                                {
-                                    "text": description,
-                                    "type": "text"
-                                }
-                            ]
-                        }
-                    ]
-                },
-                # "priority": {
-                #     "id": "3"  # P3 - Medium
-                # },
-                "labels": [],
-                "duedate": None,  # eg "2022-01-01"
-                # "assignee": {
-                #     "id": None  # Unassigned
-                # }
             }
-        })
+        )
         return requests.request(
             method="POST",
             url=self.base_url + endpoint,
             headers=self.request_headers,
-            data=payload
+            data=payload,
         )
