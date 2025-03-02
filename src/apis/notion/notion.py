@@ -1,8 +1,7 @@
 """
-Class to facilitate working with the Notion API
-
-- https://developers.notion.com/
+API clients for Notion.
 """
+
 import os
 
 import dotenv
@@ -14,8 +13,9 @@ dotenv.load_dotenv(dotenv_path=r".env")
 
 class NotionConnector:
     """
-    Bridge between Python and the Notion REST API.
+    Bridge class for the Notion REST API.
     """
+
     def __init__(self):
         """
         Create the connector.
@@ -42,7 +42,7 @@ class NotionConnector:
             "Content-Type": "application/json",
             "Accept": "application/json",
             "Notion-Version": self._notion_version,
-            "Authorization": self.auth_basic
+            "Authorization": self.auth_basic,
         }
 
     def get_users(self) -> requests.Response:

@@ -1,12 +1,13 @@
 """
-https://developers.notion.com/
+Manual testing for the API clients.
 """
+
 import notion
 
 
 def main() -> None:
     """
-    Test the ``NotionConnector`` class.
+    Manually test the API client.
     """
     notion_connector = notion.NotionConnector()
     print(notion_connector.get_users().text)
