@@ -1,17 +1,14 @@
 """
-Class to facilitate working with the Braze REST API:
-
-- https://www.braze.com/docs/api/basics/
+API clients for Braze.
 """
+
 import os
 
 import requests
 import json
-from dotenv import load_dotenv
+import dotenv
 
-
-load_dotenv(dotenv_path=".env")
-
+dotenv.load_dotenv(dotenv_path=".env")
 
 BRANDS = [
     "test",
@@ -23,8 +20,9 @@ BRANDS = [
 
 class BrazeConnector:
     """
-    Bridge between Python and the Braze REST API.
+    Bridge class for the Braze REST API.
     """
+
     def __init__(self, brand: str):
         """
         Create the connector.
@@ -39,7 +37,7 @@ class BrazeConnector:
             "test": os.getenv("TEST_KEY"),
             "jaja": os.getenv("JAJA_KEY"),
             "boi": os.getenv("BOI_KEY"),
-            "aa": os.getenv("AA_KEY")
+            "aa": os.getenv("AA_KEY"),
         }
 
     @property
@@ -48,7 +46,7 @@ class BrazeConnector:
         return {
             "Content-Type": "application/json",
             "Accept": "application/json",
-            "Authorization": f"Bearer {self.api_keys[self.brand]}"
+            "Authorization": f"Bearer {self.api_keys[self.brand]}",
         }
 
     def get_campaigns_list(self, page: int = 0) -> requests.Response:
@@ -59,7 +57,7 @@ class BrazeConnector:
         return requests.request(
             method="GET",
             url=self.base_url + endpoint,
-            headers=self.request_headers
+            headers=self.request_headers,
         )
 
     def user_profile_export_by_identifier(self, body: dict) -> requests.Response:
@@ -71,7 +69,7 @@ class BrazeConnector:
             method="POST",
             url=self.base_url + endpoint,
             headers=self.request_headers,
-            data=json.dumps(body)
+            data=json.dumps(body),
         )
 
     def user_profile_export_by_segment(self, segment_id: str) -> requests.Response:
@@ -87,12 +85,11 @@ class BrazeConnector:
                 "campaigns_received",
                 "custom_attributes",
                 "custom_events",
-            ]
-
+            ],
         }
         return requests.request(
             method="POST",
             url=self.base_url + endpoint,
             headers=self.request_headers,
-            data=json.dumps(body)
+            data=json.dumps(body),
         )
