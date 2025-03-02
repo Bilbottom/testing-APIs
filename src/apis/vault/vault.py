@@ -1,16 +1,17 @@
 """
-Class to facilitate working with the Vault REST API
-
-- https://www.vaultproject.io/api
+API clients for HashiCorp Vault.
 """
+
 import requests
 import json
+import os
 
 
-class VaultConnector(object):
+class VaultConnector:
     """
-    Bridge between Python and the Vault REST API.
+    Bridge class for the HashiCorp Vault REST API.
     """
+
     def __init__(self):
         """
         Create the connector.
@@ -21,7 +22,6 @@ class VaultConnector(object):
 
         self._auth_token = None
         sign_in_response = self.sign_in()
-        # pprint(sign_in_response.text)
         self._auth_token = json.loads(sign_in_response.text)["auth"]["client_token"]
 
     @property
@@ -112,8 +112,7 @@ class VaultConnector(object):
         )
 
     def read_secret(self, role_name: str) -> requests.Response:
-        """
-        """
+        """ """
         endpoint = f"database/static-creds/{role_name}"
         return requests.request(
             method="POST",
