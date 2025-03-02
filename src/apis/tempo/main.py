@@ -11,27 +11,36 @@ Arguments expected are, in order:
 
 https://community.atlassian.com/t5/Jira-questions/What-is-the-simplest-way-to-connect-to-Tempo-API/qaq-p/1280418
 """
+
 import requests
 import json
 import sys
+import os
 
-from credentials import CREDENTIALS
+import dotenv
 
+dotenv.load_dotenv()
 
 TEMPO_URL = "https://api.tempo.io/core/3/worklogs"
 
 
-def _make_payload(issue_key: str, time_minutes: int, start_date: str, start_time: str, description: str) -> str:
+def _make_payload(
+    issue_key: str,
+    time_minutes: int,
+    start_date: str,
+    start_time: str,
+    description: str,
+) -> str:
     """
     Create the payload JSON.
     """
     if not issue_key:
         raise ValueError("issue_key cannot be empty")
-    elif time_minutes <= 0:
+    if time_minutes <= 0:
         raise ValueError("time_minutes must be positive")
-    elif not start_date:
+    if not start_date:
         raise ValueError("start_date must be a valid date string")
-    elif not start_time:
+    if not start_time:
         raise ValueError("start_time must be a valid time string")
 
     return json.dumps(
@@ -42,8 +51,8 @@ def _make_payload(issue_key: str, time_minutes: int, start_date: str, start_time
             "startDate": start_date,
             "startTime": start_time,
             "description": description,
-            "authorAccountId": CREDENTIALS["account_id"],
-            "attributes": []
+            "authorAccountId": os.getenv("AUTHOR_ACCOUNT_ID"),
+            "attributes": [],
         }
     )
 
@@ -53,25 +62,25 @@ def main(
     time_minutes: int,
     start_date: str,
     start_time: str,
-    description: str
+    description: str,
 ) -> None:
     """"""
     headers = {
-        "Authorization": "Bearer " + CREDENTIALS["token"],
-        "Content-Type": "application/json"
+        "Authorization": "Bearer " + os.getenv("TEMPO_TOKEN"),
+        "Content-Type": "application/json",
     }
     payload = _make_payload(
         issue_key=issue_key,
         time_minutes=time_minutes,
         start_date=start_date,
         start_time=start_time,
-        description=description
+        description=description,
     )
     response = requests.request(
         method="POST",
         url=TEMPO_URL,
         headers=headers,
-        data=payload
+        data=payload,
     )
     print(response.text)
     [print(sys.argv[_]) for _ in range(len(sys.argv))]
@@ -86,5 +95,5 @@ if __name__ == "__main__":
         time_minutes=int(sys.argv[2]),
         start_date=sys.argv[3],
         start_time=sys.argv[4],
-        description=sys.argv[5]
+        description=sys.argv[5],
     )
