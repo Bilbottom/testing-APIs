@@ -1,13 +1,12 @@
 """
-Class to facilitate working with the Metabase API:
-
-- https://www.metabase.com/docs/v0.41/api-documentation.html
+API clients for Braze.
 
 Note that:
 
 - the ``KEY`` should be your username for your Metabase account
 - the ``SECRET`` should be your password for your Metabase account
 """
+
 import contextlib
 import os
 
@@ -15,14 +14,14 @@ import json
 import requests
 from dotenv import load_dotenv
 
-
 load_dotenv(dotenv_path=r".env")
 
 
-class MetabaseConnector(object):
+class MetabaseConnector:
     """
-    Bridge between Python and the Metabase REST API.
+    Bridge class for the Metabase REST API.
     """
+
     def __init__(self):
         """
         Create the connector.
@@ -42,7 +41,6 @@ class MetabaseConnector(object):
 
     @property
     def auth_token(self) -> str:
-        """Make auth_token immutable."""
         return self.__auth_token
 
     @property
@@ -53,13 +51,13 @@ class MetabaseConnector(object):
         if self.auth_token is None:
             return {
                 "Content-Type": "application/json",
-                "Accept": "application/json"
+                "Accept": "application/json",
             }
         else:
             return {
                 "Content-Type": "application/json",
                 "Accept": "application/json",
-                "X-Metabase-Session": self.auth_token
+                "X-Metabase-Session": self.auth_token,
             }
 
     ###
@@ -72,13 +70,13 @@ class MetabaseConnector(object):
         endpoint = "session"
         body = {
             "username": self.__api_key,
-            "password": self.__api_secret
+            "password": self.__api_secret,
         }
         return requests.request(
             method="POST",
             url=self.base_url + endpoint,
             headers=self.request_headers,
-            data=json.dumps(body)
+            data=json.dumps(body),
         )
 
     def sign_out(self) -> requests.Response:
@@ -89,7 +87,7 @@ class MetabaseConnector(object):
         return requests.request(
             method="DELETE",
             url=self.base_url + endpoint,
-            headers=self.request_headers
+            headers=self.request_headers,
         )
 
     ###
@@ -103,7 +101,7 @@ class MetabaseConnector(object):
         return requests.request(
             method="GET",
             url=self.base_url + endpoint,
-            headers=self.request_headers
+            headers=self.request_headers,
         )
 
     def get_database_by_id(self, database_id: int or str) -> requests.Response:
@@ -114,7 +112,7 @@ class MetabaseConnector(object):
         return requests.request(
             method="GET",
             url=self.base_url + endpoint,
-            headers=self.request_headers
+            headers=self.request_headers,
         )
 
     ###
@@ -128,5 +126,5 @@ class MetabaseConnector(object):
         return requests.request(
             method="GET",
             url=self.base_url + endpoint,
-            headers=self.request_headers
+            headers=self.request_headers,
         )
