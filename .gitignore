@@ -1,8 +1,6 @@
 # Application specific files
 *credentials.py
 *.env
-/Slack-Work/token.txt
-/Metabase/Metabase - Shortcut.lnk
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
