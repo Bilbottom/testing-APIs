@@ -8,7 +8,7 @@ import time
 import dotenv
 import jwt
 
-dotenv.load_dotenv(dotenv_path=r".env")
+dotenv.load_dotenv()
 
 METABASE_SECRET_KEY = os.getenv("METABASE_SECRET_KEY")
 METABASE_SITE_URL = "http://localhost:3000"

@@ -6,6 +6,10 @@ import requests
 import json
 import os
 
+import dotenv
+
+dotenv.load_dotenv()
+
 
 class VaultConnector:
     """
@@ -32,7 +36,7 @@ class VaultConnector:
     @property
     def request_headers(self) -> dict:
         """
-        Set up the default headers into a dictionary.
+        Default request headers.
         """
         if self.auth_token is None:
             return {

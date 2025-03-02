@@ -1,3 +1,7 @@
+"""
+Manual testing for the API clients.
+"""
+
 import contextlib
 import json
 import pathlib
@@ -11,9 +15,9 @@ def _write_json(data: dict, filename: str) -> None:
     (HERE / filename).write_text(json.dumps(data), encoding="utf-8")
 
 
-def get_company_profile_and_officers():
+def main() -> None:
     """
-    Sample method to get an idea of what properties to push into a database.
+    Manually test the API client.
     """
     disallowed_company_properties = [
         "previous_company_names",
@@ -43,4 +47,4 @@ def get_company_profile_and_officers():
 
 
 if __name__ == "__main__":
-    get_company_profile_and_officers()
+    main()

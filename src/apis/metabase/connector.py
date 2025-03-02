@@ -10,11 +10,11 @@ Note that:
 import contextlib
 import os
 
+import dotenv
 import json
 import requests
-from dotenv import load_dotenv
 
-load_dotenv(dotenv_path=r".env")
+dotenv.load_dotenv()
 
 
 class MetabaseConnector:
@@ -46,7 +46,7 @@ class MetabaseConnector:
     @property
     def request_headers(self) -> dict:
         """
-        Set up the default headers into a dictionary.
+        Default request headers.
         """
         if self.auth_token is None:
             return {

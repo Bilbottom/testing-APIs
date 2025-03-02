@@ -10,7 +10,7 @@ import requests
 # extends `requests` to include OAuth 1.0a (One-Legged)
 from requests_oauthlib import OAuth1Session
 
-dotenv.load_dotenv(dotenv_path=".env")
+dotenv.load_dotenv()
 
 
 class GalleryConnector(object):
@@ -26,7 +26,7 @@ class GalleryConnector(object):
     @property
     def request_headers(self) -> dict:
         """
-        Set up the default headers into a dictionary.
+        Default request headers.
         """
         return {
             "Content-Type": "application/json",

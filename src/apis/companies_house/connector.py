@@ -52,7 +52,9 @@ class CompaniesHouseConnector:
 
     @property
     def request_headers(self) -> dict:
-        """Set up the default headers into a dictionary"""
+        """
+        Default request headers.
+        """
         return {
             "Content-Type": "application/json",
             "Accept": "application/json",

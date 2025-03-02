@@ -4,7 +4,7 @@ API clients for Braze.
 https://www.braze.com/docs/api/basics/
 """
 
-from .braze import BrazeConnector
+from src.apis.braze.connector import BrazeConnector
 
 __all__ = [
     "BrazeConnector",

@@ -4,7 +4,7 @@ API clients for HashiCorp Vault.
 https://developer.hashicorp.com/vault/api-docs
 """
 
-from .vault import VaultConnector
+from src.apis.vault.connector import VaultConnector
 
 __all__ = [
     "VaultConnector",

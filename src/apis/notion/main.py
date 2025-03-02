@@ -2,7 +2,7 @@
 Manual testing for the API clients.
 """
 
-import notion
+from src.apis import notion
 
 
 def main() -> None:

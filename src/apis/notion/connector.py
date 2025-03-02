@@ -7,8 +7,7 @@ import os
 import dotenv
 import requests
 
-
-dotenv.load_dotenv(dotenv_path=r".env")
+dotenv.load_dotenv()
 
 
 class NotionConnector:
@@ -36,7 +35,7 @@ class NotionConnector:
     @property
     def request_headers(self) -> dict:
         """
-        Set up the default headers into a dictionary.
+        Default request headers.
         """
         return {
             "Content-Type": "application/json",

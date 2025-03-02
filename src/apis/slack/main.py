@@ -1,8 +1,7 @@
 import sys
 import os
-from pathlib import Path
-from dotenv import load_dotenv
 
+import dotenv
 import slack  # pip install slack_sdk
 
 
@@ -16,7 +15,7 @@ else:
 
 
 user_me = "U01K959PA8Y"
-load_dotenv(dotenv_path=Path(".") / ".env")
+dotenv.load_dotenv()
 client = slack.WebClient(token=os.environ["SLACK_TOKEN"])
 
 

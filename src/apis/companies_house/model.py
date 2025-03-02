@@ -1,5 +1,5 @@
 """
-Custom enums for working with the Companies House API
+Domain objects for working with the Companies House API.
 """
 
 import enum

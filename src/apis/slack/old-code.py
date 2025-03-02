@@ -1,9 +1,9 @@
 import os
-import dotenv
 
+import dotenv
 import slack  # pip install slack_sdk
 
-dotenv.load_dotenv(dotenv_path=r".env")
+dotenv.load_dotenv()
 
 
 def main() -> None:

@@ -18,7 +18,7 @@ import dotenv
 import requests
 import json
 
-dotenv.load_dotenv(dotenv_path=r".env")
+dotenv.load_dotenv()
 
 
 class JiraConnector:
@@ -50,7 +50,9 @@ class JiraConnector:
 
     @property
     def request_headers(self) -> dict:
-        """Set up the default headers into a dictionary"""
+        """
+        Default request headers.
+        """
         return {
             "Content-Type": "application/json",
             "Accept": "application/json",

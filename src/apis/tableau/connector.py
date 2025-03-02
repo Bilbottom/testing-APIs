@@ -11,7 +11,7 @@ import os
 import dotenv
 import requests
 
-dotenv.load_dotenv(dotenv_path=".env")
+dotenv.load_dotenv()
 
 API_VERSION = "3.8"
 URL = f"https://tableau.prod.jaja.finance/api/{API_VERSION}/"
@@ -59,7 +59,9 @@ class TableauConnector:
 
     @property
     def request_headers(self) -> dict:
-        """Set up the default headers into a dictionary"""
+        """
+        Default request headers.
+        """
         if self.auth_token is None:
             return {
                 "Content-Type": "application/json",

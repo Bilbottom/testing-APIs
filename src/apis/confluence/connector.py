@@ -17,7 +17,7 @@ import os
 import requests
 import dotenv
 
-dotenv.load_dotenv(dotenv_path=".env")
+dotenv.load_dotenv()
 
 
 class ConfluenceConnector:
@@ -51,7 +51,7 @@ class ConfluenceConnector:
     @property
     def request_headers(self) -> dict:
         """
-        Set up the default headers into a dictionary.
+        Default request headers.
         """
         return {
             "Content-Type": "application/json",
