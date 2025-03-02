@@ -3,20 +3,21 @@ Class to facilitate working with the Tableau Server REST API:
 
 - https://help.tableau.com/current/api/rest_api/en-us/REST/rest_api_ref.htm
 """
+
 import contextlib
-
-import requests
 import json
+import os
 
+import dotenv
+import requests
 
-load_dotenv(dotenv_path=".env")
-
+dotenv.load_dotenv(dotenv_path=".env")
 
 API_VERSION = "3.8"
 URL = f"https://tableau.prod.jaja.finance/api/{API_VERSION}/"
 
 
-class TableauConnector(object):
+class TableauConnector:
     def __init__(self, auth_type: str = "uap"):
         self.base_url = URL
         self._auth_type = auth_type.lower()
@@ -86,7 +87,7 @@ class TableauConnector(object):
                     "personalAccessTokenSecret": self.credentials[1],
                     "site": {
                         "contentUrl": "",
-                    }
+                    },
                 }
             }
         else:
@@ -96,7 +97,7 @@ class TableauConnector(object):
                     "password": self.credentials[1],
                     "site": {
                         "contentUrl": "",
-                    }
+                    },
                 }
             }
 
@@ -205,7 +206,11 @@ class TableauConnector(object):
             data="{}",
         )
 
-    def update_data_source(self, datasource_id: str, new_owner_id: str) -> requests.Response:
+    def update_data_source(
+        self,
+        datasource_id: str,
+        new_owner_id: str,
+    ) -> requests.Response:
         """
         https://help.tableau.com/current/api/rest_api/en-us/REST/rest_api_ref_data_sources.htm#update_data_source
 
@@ -255,20 +260,29 @@ class TableauConnector(object):
         """
         https://help.tableau.com/current/api/rest_api/en-us/REST/rest_api_ref_workbooks_and_views.htm#query_workbooks_for_user
         """
-        endpoint = f"sites/{self.site_id}/users/{user_id}/workbooks?ownedBy=true&pageSize=1000"
+        endpoint = (
+            f"sites/{self.site_id}/users/{user_id}/workbooks?ownedBy=true&pageSize=1000"
+        )
         return requests.request(
             method="GET",
             url=self.base_url + endpoint,
             headers=self.request_headers,
         )
 
-    def update_workbook_connection(self, workbook_id: str, connection_id: str, new_password: str) -> requests.Response:
+    def update_workbook_connection(
+        self,
+        workbook_id: str,
+        connection_id: str,
+        new_password: str,
+    ) -> requests.Response:
         """
         https://help.tableau.com/current/api/rest_api/en-us/REST/rest_api_ref_workbooks_and_views.htm#update_workbook_connection
 
         Only set up to change the password.
         """
-        endpoint = f"sites/{self.site_id}/workbooks/{workbook_id}/connections/{connection_id}"
+        endpoint = (
+            f"sites/{self.site_id}/workbooks/{workbook_id}/connections/{connection_id}"
+        )
         body = {
             "connection": {
                 "password": new_password,
