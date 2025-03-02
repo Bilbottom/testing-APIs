@@ -6,7 +6,7 @@ import smtplib
 import ssl
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     smtp_server = "smtp.gmail.com"
     port = 587  # For starttls
     sender_email = "my@gmail.com"
