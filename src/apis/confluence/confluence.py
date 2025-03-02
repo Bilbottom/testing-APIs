@@ -1,7 +1,5 @@
 """
-Class to facilitate working with the Confluence API:
-
-- https://developer.atlassian.com/cloud/confluence/rest/intro/
+API clients for Confluence.
 
 Note that:
 
@@ -12,20 +10,21 @@ See the following documentation:
 
 - https://id.atlassian.com/manage-profile/security/api-tokens
 """
+
 import base64
+import os
 
 import requests
-import json
-from dotenv import load_dotenv
+import dotenv
+
+dotenv.load_dotenv(dotenv_path=".env")
 
 
-load_dotenv(dotenv_path=r"Jira/.env")
-
-
-class ConfluenceConnector(object):
+class ConfluenceConnector:
     """
-    Bridge between Python and the Confluence REST API.
+    Bridge class for the Confluence REST API.
     """
+
     def __init__(self):
         """
         Create the connector.
@@ -42,7 +41,12 @@ class ConfluenceConnector(object):
         - https://developer.atlassian.com/cloud/jira/platform/basic-auth-for-rest-apis/#supply-basic-auth-headers
         """
         # TODO: Consider using requests.auth.HTTPBasicAuth() instead
-        return "Basic " + base64.b64encode(f"{self._api_key}:{self._api_secret}".encode("UTF-8")).decode()
+        return (
+            "Basic "
+            + base64.b64encode(
+                f"{self._api_key}:{self._api_secret}".encode("UTF-8")
+            ).decode()
+        )
 
     @property
     def request_headers(self) -> dict:
@@ -52,7 +56,7 @@ class ConfluenceConnector(object):
         return {
             "Content-Type": "application/json",
             "Accept": "application/json",
-            "Authorization": self.auth_basic
+            "Authorization": self.auth_basic,
         }
 
     def get_spaces(self) -> requests.Response:
@@ -63,7 +67,7 @@ class ConfluenceConnector(object):
         return requests.request(
             method="GET",
             url=self.base_url + endpoint,
-            headers=self.request_headers
+            headers=self.request_headers,
         )
 
     def search_content_by_cql(self, cql: str) -> requests.Response:
@@ -74,5 +78,5 @@ class ConfluenceConnector(object):
         return requests.request(
             method="GET",
             url=self.base_url + endpoint,
-            headers=self.request_headers
+            headers=self.request_headers,
         )
