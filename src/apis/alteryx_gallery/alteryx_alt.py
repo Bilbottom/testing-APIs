@@ -1,27 +1,25 @@
 """
-Class (alternative) to facilitate working with the Alteryx Gallery REST API:
-
-- https://help.alteryx.com/developer-help/gallery-api-overview
+Alternative API clients for Alteryx Gallery.
 """
+
 import math
 import os
 import re
 import time
 import uuid
 
+import dotenv
 import requests
-import json
 import oauthlib.oauth1
-from dotenv import load_dotenv
 
-
-load_dotenv(dotenv_path=".env")
+dotenv.load_dotenv(dotenv_path=".env")
 
 
 class GalleryConnector(object):
     """
-    Bridge between Python and the Alteryx Gallery REST API.
+    Bridge class for the Alteryx Gallery REST API.
     """
+
     def __init__(self):
         self.base_url = "http://172.28.67.186/api/"
         self._api_key = os.getenv("KEY")
@@ -67,11 +65,11 @@ class GalleryConnector(object):
         """
         client = oauthlib.oauth1.Client(
             client_key=self._api_key,
-            client_secret=self._api_secret
+            client_secret=self._api_secret,
         )
         return re.search(
             'oauth_signature="(.*)"',
-            client.sign("http://172.28.67.186/api")[1]["Authorization"]
+            client.sign("http://172.28.67.186/api")[1]["Authorization"],
         )[1]
 
     @property
@@ -93,12 +91,18 @@ class GalleryConnector(object):
         return {
             "Content-Type": "application/json",
             "Accept": "application/json",
-            "Authorization": f'OAuth '
-                             f'oauth_consumer_key="{self.oauth_consumer_key}",'
-                             f'oauth_signature_method="{self.oauth_signature_method}",'
-                             f'oauth_signature="{self.oauth_signature}",'
-                             f'oauth_timestamp="{self.oauth_timestamp}",'
-                             f'oauth_nonce="{self.oauth_nonce}"'
+            "Authorization": (
+                "OAuth "
+                + ",".join(
+                    [
+                        f'oauth_consumer_key="{self.oauth_consumer_key}"',
+                        f'oauth_signature_method="{self.oauth_signature_method}"',
+                        f'oauth_signature="{self.oauth_signature}"',
+                        f'oauth_timestamp="{self.oauth_timestamp}"',
+                        f'oauth_nonce="{self.oauth_nonce}"',
+                    ]
+                )
+            ),
         }
 
     def get_credentials(self) -> requests.Response:

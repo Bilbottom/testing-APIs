@@ -1,23 +1,23 @@
 """
-Class to facilitate working with the Alteryx Gallery REST API:
-
-- https://help.alteryx.com/developer-help/gallery-api-overview
+API clients for Alteryx Gallery.
 """
+
 import os
 
+import dotenv
 import requests
-import json
-from dotenv import load_dotenv
-from requests_oauthlib import OAuth1Session  # extends requests to include OAuth 1.0a (One-Legged)
 
+# extends `requests` to include OAuth 1.0a (One-Legged)
+from requests_oauthlib import OAuth1Session
 
-load_dotenv(dotenv_path=".env")
+dotenv.load_dotenv(dotenv_path=".env")
 
 
 class GalleryConnector(object):
     """
-    Bridge between Python and the Alteryx Gallery REST API.
+    Bridge class for the Alteryx Gallery REST API.
     """
+
     def __init__(self):
         self.base_url = "http://172.28.67.186/api/"
         self._api_key = os.getenv("KEY")
@@ -30,7 +30,7 @@ class GalleryConnector(object):
         """
         return {
             "Content-Type": "application/json",
-            "Accept": "application/json"
+            "Accept": "application/json",
         }
 
     @property
@@ -40,7 +40,7 @@ class GalleryConnector(object):
         """
         return OAuth1Session(
             client_key=self._api_key,
-            client_secret=self._api_secret
+            client_secret=self._api_secret,
         )
 
     def get_shared_credentials(self) -> requests.Response:
@@ -51,7 +51,7 @@ class GalleryConnector(object):
         return self.oauth_1.request(
             method="GET",
             url=self.base_url + endpoint,
-            headers=self.request_headers
+            headers=self.request_headers,
         )
 
     def enqueue(self, workflow_id: str) -> requests.Response:
@@ -62,5 +62,5 @@ class GalleryConnector(object):
         return self.oauth_1.request(
             method="POST",
             url=self.base_url + endpoint,
-            headers=self.request_headers
+            headers=self.request_headers,
         )
