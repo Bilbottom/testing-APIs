@@ -2,15 +2,34 @@
 Manual testing for the API clients.
 """
 
+import os
+
+import dotenv
+
 import src.utils
 from src.apis import braze
+
+dotenv.load_dotenv()
+
+BASE_URL = "https://rest.fra-01.braze.eu/"
+API_KEYS = {
+    "test": os.getenv("BRAZE__TEST__API_KEY"),
+    "jaja": os.getenv("BRAZE__JAJA__API_KEY"),
+    "boi": os.getenv("BRAZE__BOI__API_KEY"),
+    "aa": os.getenv("BRAZE__AA__API_KEY"),
+}
 
 
 def main() -> None:
     """
     Manually test the API client.
     """
-    braze_connector = braze.BrazeConnector(brand="jaja")
+    brand = "jaja"
+    braze_connector = braze.BrazeConnector(
+        base_url=BASE_URL,
+        brand=brand,
+        api_key=API_KEYS[brand],
+    )
 
     # Campaign list
     src.utils.pprint(braze_connector.get_campaigns_list().text)

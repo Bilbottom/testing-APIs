@@ -2,20 +2,24 @@
 API clients for Braze.
 """
 
-import os
-
+import enum
 import requests
 import json
-import dotenv
 
-dotenv.load_dotenv()
 
-BRANDS = [
-    "test",
-    "jaja",
-    "boi",
-    "aa",
-]
+class Brand(enum.StrEnum):
+    TEST = "test"
+    JAJA = "jaja"
+    BOI = "boi"
+    AA = "aa"
+
+
+def _parse_brand(brand: str) -> Brand:
+    try:
+        return Brand(brand.lower().strip())
+    except ValueError as e:
+        brands = [f"'{k.value}'" for k in Brand]
+        raise ValueError(f"Brand must be one of {', '.join(brands)}") from e
 
 
 class BrazeConnector:
@@ -23,22 +27,10 @@ class BrazeConnector:
     Bridge class for the Braze REST API.
     """
 
-    def __init__(self, brand: str):
-        """
-        Create the connector.
-        """
-        self.base_url = "https://rest.fra-01.braze.eu/"
-        self.brand = brand.lower().strip()
-
-        if self.brand not in BRANDS:
-            raise ValueError(f"Brand must be one of {BRANDS}")
-
-        self.api_keys = {
-            "test": os.getenv("TEST_KEY"),
-            "jaja": os.getenv("JAJA_KEY"),
-            "boi": os.getenv("BOI_KEY"),
-            "aa": os.getenv("AA_KEY"),
-        }
+    def __init__(self, base_url: str, brand: str, api_key: str):
+        self.base_url = base_url
+        self.brand = _parse_brand(brand)
+        self.api_key = api_key
 
     @property
     def request_headers(self) -> dict:
@@ -48,7 +40,7 @@ class BrazeConnector:
         return {
             "Content-Type": "application/json",
             "Accept": "application/json",
-            "Authorization": f"Bearer {self.api_keys[self.brand]}",
+            "Authorization": f"Bearer {self.api_key}",
         }
 
     def get_campaigns_list(self, page: int = 0) -> requests.Response:
