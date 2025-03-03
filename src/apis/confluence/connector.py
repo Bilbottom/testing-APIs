@@ -12,12 +12,8 @@ See the following documentation:
 """
 
 import base64
-import os
 
 import requests
-import dotenv
-
-dotenv.load_dotenv()
 
 
 class ConfluenceConnector:
@@ -25,13 +21,10 @@ class ConfluenceConnector:
     Bridge class for the Confluence REST API.
     """
 
-    def __init__(self):
-        """
-        Create the connector.
-        """
-        self.base_url = "https://jaja.atlassian.net/wiki/rest/api/"
-        self._api_key = os.getenv("KEY")
-        self._api_secret = os.getenv("SECRET")
+    def __init__(self, domain: str, api_key: str, api_secret: str):
+        self.base_url = f"https://{domain}.atlassian.net/wiki/rest/api/"
+        self._api_key = api_key
+        self._api_secret = api_secret
 
     @property
     def auth_basic(self) -> str:
