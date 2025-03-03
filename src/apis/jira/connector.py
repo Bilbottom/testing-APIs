@@ -12,13 +12,9 @@ See the following documentation:
 """
 
 import base64
-import os
 
-import dotenv
 import requests
 import json
-
-dotenv.load_dotenv()
 
 
 class JiraConnector:
@@ -26,13 +22,10 @@ class JiraConnector:
     Bridge class for the Jira REST API.
     """
 
-    def __init__(self):
-        """
-        Create the connector.
-        """
-        self.base_url = "https://billiam.atlassian.net/rest/api/3/"
-        self._api_key = os.getenv("KEY")
-        self._api_secret = os.getenv("SECRET")
+    def __init__(self, domain: str, api_key: str, api_secret: str):
+        self.base_url = f"https://{domain}.atlassian.net/rest/api/3/"
+        self._api_key = api_key
+        self._api_secret = api_secret
 
     @property
     def auth_basic(self) -> str:

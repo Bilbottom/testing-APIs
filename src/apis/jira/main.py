@@ -2,15 +2,25 @@
 Manual testing for the API clients.
 """
 
+import os
+
+import dotenv
+
 import src.utils
 from src.apis import jira
+
+dotenv.load_dotenv()
 
 
 def main() -> None:
     """
     Test the ``JiraConnector`` class.
     """
-    jira_connector = jira.JiraConnector()
+    jira_connector = jira.JiraConnector(
+        domain=os.getenv("ATLASSIAN__DOMAIN"),
+        api_key=os.getenv("ATLASSIAN__API_KEY"),
+        api_secret=os.getenv("ATLASSIAN__API_SECRET"),
+    )
     project_id = "10000"
 
     src.utils.pprint(jira_connector.get_projects_paginated().text)
