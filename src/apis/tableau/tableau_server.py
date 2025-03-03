@@ -12,7 +12,7 @@ class TableauUser:
     A user in the corresponding Tableau server.
     """
 
-    def __init__(self, key: str, secret: str, auth_type: str = "pat"):
+    def __init__(self, key: str, secret: str, auth_type: str):
         """
         :param key: the REST API key.
         :param secret: the REST API secret.
@@ -30,13 +30,10 @@ class TableauUser:
             )
 
         self.server = tsc.Server(
-            r"https://tableau.prod.jaja.finance",
+            r"https://tableau.prod.company",
             use_server_version=True,
         )
         # self.server.auth.sign_in(self._auth)
-
-    # def __del__(self):
-    #     self.server.auth.sign_out()
 
     def list_datasources(self):
         """Example method to test the class"""

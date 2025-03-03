@@ -4,75 +4,78 @@ Class to facilitate working with the Tableau Server REST API:
 - https://help.tableau.com/current/api/rest_api/en-us/REST/rest_api_ref.htm
 """
 
-import contextlib
+import enum
 import json
-import os
 
-import dotenv
 import requests
 
-dotenv.load_dotenv()
-
 API_VERSION = "3.8"
-URL = f"https://tableau.prod.jaja.finance/api/{API_VERSION}/"
+
+
+class TableauAuthType(enum.StrEnum):
+    PERSONAL_ACCESS_TOKEN = "pat"
+    USERNAME_AND_PASSWORD = "uap"
+
+
+def _parse_auth(auth_type: str) -> TableauAuthType:
+    try:
+        return TableauAuthType(auth_type.lower().strip())
+    except ValueError as e:
+        auth_types = [f"'{k.value}'" for k in TableauAuthType]
+        raise ValueError(f"Auth type must be one of {', '.join(auth_types)}") from e
 
 
 class TableauConnector:
-    def __init__(self, auth_type: str = "uap"):
-        self.base_url = URL
-        self._auth_type = auth_type.lower()
-        if self.auth_type == "pat":
-            self.credentials = [os.getenv("PAT_KEY"), os.getenv("PAT_SECRET")]
-        elif self.auth_type == "uap":
-            self.credentials = [os.getenv("UAP_KEY"), os.getenv("UAP_SECRET")]
+    def __init__(
+        self,
+        domain: str,
+        api_key: str,
+        api_secret: str,
+        auth_type: str = "uap",
+    ):
+        self.base_url = f"https://{domain}/api/{API_VERSION}/"
+        self.api_key = api_key
+        self.api_secret = api_secret
+        self.auth_type = _parse_auth(auth_type)
+        # self.auth_token = None
+
+        creds = json.loads(self.sign_in().text)["credentials"]
+        self.auth_token = creds["token"]
+        self.site_id = creds["site"]["id"]
+        self.user_id = creds["user"]["id"]
+
+    @property
+    def credentials(self) -> dict:
+        if self.auth_type == TableauAuthType.PERSONAL_ACCESS_TOKEN:
+            key_name = "personalAccessTokenName"
+            secret_name = "personalAccessTokenSecret"
+        elif self.auth_type == TableauAuthType.USERNAME_AND_PASSWORD:
+            key_name = "name"
+            secret_name = "password"
         else:
-            raise ValueError(
-                "Acceptable arguments to auth_type are"
-                " 'pat' for Personal Access Token and 'uap' for Username And Password"
-            )
+            raise ValueError("Invalid auth type")
 
-        self._auth_token = None
-        _sign_in_response = self.sign_in()
-        # pprint(_sign_in_response.text)
-        self._site_id = json.loads(_sign_in_response.text)["credentials"]["site"]["id"]
-        self._auth_token = json.loads(_sign_in_response.text)["credentials"]["token"]
-        self._user_id = json.loads(_sign_in_response.text)["credentials"]["user"]["id"]
-
-    def __del__(self):
-        with contextlib.suppress(ImportError):
-            self.sign_out()
-
-    @property
-    def auth_type(self) -> str:
-        """Make auth_type immutable"""
-        return self._auth_type
-
-    @property
-    def auth_token(self) -> str:
-        """Make auth_token immutable"""
-        return self._auth_token
-
-    @property
-    def site_id(self) -> str:
-        """Make site_id immutable"""
-        return self._site_id
+        return {
+            key_name: self.api_key,
+            secret_name: self.api_secret,
+            "site": {
+                "contentUrl": "",
+            },
+        }
 
     @property
     def request_headers(self) -> dict:
         """
         Default request headers.
         """
-        if self.auth_token is None:
-            return {
-                "Content-Type": "application/json",
-                "Accept": "application/json",
-            }
-        else:
-            return {
-                "Content-Type": "application/json",
-                "Accept": "application/json",
-                "X-Tableau-Auth": self.auth_token,
-            }
+        headers = {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+        }
+        if t := getattr(self, "auth_token", None):
+            headers["X-Tableau-Auth"] = t
+
+        return headers
 
     ###
     # Authentication Methods
@@ -82,32 +85,11 @@ class TableauConnector:
         https://help.tableau.com/current/api/rest_api/en-us/REST/rest_api_ref_authentication.htm#sign_in
         """
         endpoint = "auth/signin"
-        if self.auth_type == "pat":
-            body = {
-                "credentials": {
-                    "personalAccessTokenName": self.credentials[0],
-                    "personalAccessTokenSecret": self.credentials[1],
-                    "site": {
-                        "contentUrl": "",
-                    },
-                }
-            }
-        else:
-            body = {
-                "credentials": {
-                    "name": self.credentials[0],
-                    "password": self.credentials[1],
-                    "site": {
-                        "contentUrl": "",
-                    },
-                }
-            }
-
         return requests.request(
             method="POST",
             url=self.base_url + endpoint,
             headers=self.request_headers,
-            data=json.dumps(body),
+            data=json.dumps({"credentials": self.credentials}),
         )
 
     def sign_out(self) -> requests.Response:

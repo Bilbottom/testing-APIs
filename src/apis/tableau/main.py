@@ -3,9 +3,14 @@ Manual testing/running of the API clients.
 """
 
 import json
+import os
+
+import dotenv
 
 import src.utils
 from src.apis import tableau
+
+dotenv.load_dotenv()
 
 
 def change_objects_owner(tableau_connector: tableau.TableauConnector) -> None:
@@ -110,7 +115,12 @@ def main() -> None:
     agency_payments_workbook_id = (
         "60e884e0-2660-44e1-a1b2-56d855d6d91d"  # Just an example
     )
-    tableau_connector = tableau.TableauConnector()
+    tableau_connector = tableau.TableauConnector(
+        domain="tableau.prod.company",
+        api_key=os.getenv("TABLEAU__API_KEY"),
+        api_secret=os.getenv("TABLEAU__API_SECRET"),
+        auth_type=os.getenv("TABLEAU__AUTH_TYPE"),
+    )
 
     src.utils.pprint(tableau_connector.query_data_sources().text)
     src.utils.pprint(tableau_connector.query_workbooks_for_site().text)
