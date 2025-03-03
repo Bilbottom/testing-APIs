@@ -1,20 +1,15 @@
 """
-API clients for Braze.
+API clients for Metabase.
 
 Note that:
 
-- the ``KEY`` should be your username for your Metabase account
-- the ``SECRET`` should be your password for your Metabase account
+- the ``api_key`` should be your username for your Metabase account
+- the ``api_secret`` should be your password for your Metabase account
 """
 
-import contextlib
-import os
-
-import dotenv
 import json
-import requests
 
-dotenv.load_dotenv()
+import requests
 
 
 class MetabaseConnector:
@@ -22,22 +17,17 @@ class MetabaseConnector:
     Bridge class for the Metabase REST API.
     """
 
-    def __init__(self):
+    def __init__(self, base_url: str, api_key: str, api_secret: str):
         """
         Create the connector.
         """
-        self.base_url = "http://localhost:3000/api/"
-        self.__api_key = os.getenv("KEY")
-        self.__api_secret = os.getenv("SECRET")
+        self.base_url = base_url
+        self.__api_key = api_key
+        self.__api_secret = api_secret
         self.__auth_token = None
 
         sign_in_response = self.sign_in()
-        # print(sign_in_response.text)
         self.__auth_token = json.loads(sign_in_response.text)["id"]
-
-    def __del__(self):
-        with contextlib.suppress(ImportError):
-            self.sign_out()
 
     @property
     def auth_token(self) -> str:
@@ -48,17 +38,14 @@ class MetabaseConnector:
         """
         Default request headers.
         """
-        if self.auth_token is None:
-            return {
-                "Content-Type": "application/json",
-                "Accept": "application/json",
-            }
-        else:
-            return {
-                "Content-Type": "application/json",
-                "Accept": "application/json",
-                "X-Metabase-Session": self.auth_token,
-            }
+        headers = {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+        }
+        if self.auth_token:
+            headers["X-Metabase-Session"] = self.auth_token
+
+        return headers
 
     ###
     # Authentication Methods

@@ -1,5 +1,5 @@
 """
-API clients for Braze.
+API clients for Metabase.
 
 https://www.metabase.com/docs/v0.41/api-documentation.html
 """

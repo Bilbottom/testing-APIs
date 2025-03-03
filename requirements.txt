@@ -9,3 +9,4 @@ pytest-cov
 
 # api-specific reqs
 -r src/apis/alteryx_gallery/requirements.txt
+-r src/apis/metabase/requirements.txt

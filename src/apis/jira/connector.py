@@ -3,8 +3,8 @@ API clients for Jira.
 
 Note that:
 
-- the ``KEY`` should be your email address for your Atlassian account
-- the ``SECRET`` should be a token that you generate for your Atlassian account
+- the ``api_key`` should be your email address for your Atlassian account
+- the ``api_secret`` should be a token that you generate for your Atlassian account
 
 See the following documentation:
 

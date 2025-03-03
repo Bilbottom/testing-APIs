@@ -1,11 +1,18 @@
 """
-Testing the ``MetabaseConnector`` class defined in ``metabase.py``.
+Manual testing for the API clients.
 """
 
 import json
+import os
+
+import dotenv
 
 import src.utils
 from src.apis import metabase
+
+dotenv.load_dotenv()
+
+BASE_URL = "http://localhost:3000/api/"
 
 
 def list_databases(mb_connector: metabase.MetabaseConnector) -> None:
@@ -22,7 +29,11 @@ def main() -> None:
     """
     Manually test the API client.
     """
-    metabase_connector = metabase.MetabaseConnector()
+    metabase_connector = metabase.MetabaseConnector(
+        base_url=BASE_URL,
+        api_key=os.getenv("METABASE__API_KEY"),
+        api_secret=os.getenv("METABASE__API_SECRET"),
+    )
 
     src.utils.pprint(metabase_connector.get_user_current().text)
     src.utils.pprint(metabase_connector.get_databases().text)

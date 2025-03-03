@@ -22,15 +22,6 @@ class Credentials:
         )
 
 
-class MockRequests:
-    @staticmethod
-    def request(*args, **kwargs):
-        return {
-            "args": args,
-            "kwargs": kwargs,
-        }
-
-
 @pytest.fixture
 def connection() -> connector.BrazeConnector:
     creds = Credentials.default()
