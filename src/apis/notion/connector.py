@@ -2,12 +2,9 @@
 API clients for Notion.
 """
 
-import os
-
-import dotenv
 import requests
 
-dotenv.load_dotenv()
+DEFAULT_NOTION_VERSION = "2022-06-28"
 
 
 class NotionConnector:
@@ -15,13 +12,13 @@ class NotionConnector:
     Bridge class for the Notion REST API.
     """
 
-    def __init__(self):
+    def __init__(self, api_token: str, version: str = DEFAULT_NOTION_VERSION):
         """
         Create the connector.
         """
-        self._base_url = "https://api.notion.com/v1/"
-        self._notion_version = "2022-06-28"
-        self._token = os.getenv("NOTION_TOKEN")
+        self.base_url = "https://api.notion.com/v1/"
+        self.notion_version = version
+        self._token = api_token
 
     @property
     def auth_basic(self) -> str:
@@ -40,7 +37,7 @@ class NotionConnector:
         return {
             "Content-Type": "application/json",
             "Accept": "application/json",
-            "Notion-Version": self._notion_version,
+            "Notion-Version": self.notion_version,
             "Authorization": self.auth_basic,
         }
 
@@ -49,9 +46,9 @@ class NotionConnector:
         https://developers.notion.com/reference/get-users
         """
         endpoint = "users"
-        print(self._base_url + endpoint)
+        print(self.base_url + endpoint)
         return requests.request(
             method="GET",
-            url=self._base_url + endpoint,
+            url=self.base_url + endpoint,
             headers=self.request_headers,
         )
