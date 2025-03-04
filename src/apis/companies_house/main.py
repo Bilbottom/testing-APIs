@@ -4,9 +4,14 @@ Manual testing for the API clients.
 
 import contextlib
 import json
+import os
 import pathlib
 
+import dotenv
+
 from src.apis import companies_house
+
+dotenv.load_dotenv()
 
 HERE = pathlib.Path(__file__).parent
 
@@ -19,23 +24,22 @@ def main() -> None:
     """
     Manually test the API client.
     """
+    ch_conn = companies_house.CompaniesHouseConnector(
+        api_key=os.getenv("COMPANIES_HOUSE__API_KEY"),
+    )
+
+    company_number = companies_house.CompanyNumber(7706156)
+    allica_bank = companies_house.Company(
+        companies_house_connector=ch_conn,
+        company_number=company_number,
+    )
+
     disallowed_company_properties = [
         "previous_company_names",
         "sic_codes",
         "foreign_company_details",
     ]
     disallowed_officer_properties = ["former_names"]
-
-    try:
-        ch_conn = companies_house.CompaniesHouseConnector()
-        company_number = companies_house.CompanyNumber(7706156)
-        allica_bank = companies_house.Company(
-            companies_house_connector=ch_conn,
-            company_number=company_number,
-        )
-    except ValueError:
-        quit(1)
-
     company_profile_json = allica_bank.get_company_profile()
     company_officers_json = allica_bank.get_company_officers()
     with contextlib.suppress(KeyError):

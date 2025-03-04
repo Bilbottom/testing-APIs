@@ -3,18 +3,18 @@ API clients for Companies House.
 
 Note that the authentication is controlled by setting up an application
 in Companies House.
+
+https://developer.company-information.service.gov.uk/overview
 """
 
-import os
-from base64 import b64encode
+import base64
 from typing import Any
 
 import requests
-import dotenv
 
 from src.apis.companies_house import model
 
-dotenv.load_dotenv()
+BASE_URL = "https://api.company-information.service.gov.uk/"
 
 
 def _build_query_parameters(**kwargs) -> str:
@@ -37,9 +37,9 @@ def _build_query_parameters(**kwargs) -> str:
 
 
 class CompaniesHouseConnector:
-    def __init__(self):
-        self.base_url = "https://api.company-information.service.gov.uk/"
-        self.__api_key = os.environ["COMPANIES_HOUSE_API_KEY"]
+    def __init__(self, api_key: str):
+        self.base_url = BASE_URL
+        self.api_key = api_key
 
     @property
     def auth_basic(self) -> str:
@@ -48,7 +48,7 @@ class CompaniesHouseConnector:
 
         https://developer-specs.company-information.service.gov.uk/guides/authorisation
         """
-        return "Basic " + b64encode(f"{self.__api_key}:".encode("UTF-8")).decode()
+        return "Basic " + base64.b64encode(f"{self.api_key}:".encode("UTF-8")).decode()
 
     @property
     def request_headers(self) -> dict:
@@ -84,7 +84,9 @@ class CompaniesHouseConnector:
         """
         endpoint = f"company/{company_number}"
         return requests.request(
-            method="GET", url=self.base_url + endpoint, headers=self.request_headers
+            method="GET",
+            url=self.base_url + endpoint,
+            headers=self.request_headers,
         )
 
     def get_company_officers(
@@ -108,7 +110,9 @@ class CompaniesHouseConnector:
         )
         endpoint = f"company/{company_number}/officers{parameters}"
         return requests.request(
-            method="GET", url=self.base_url + endpoint, headers=self.request_headers
+            method="GET",
+            url=self.base_url + endpoint,
+            headers=self.request_headers,
         )
 
     def search(
@@ -165,43 +169,13 @@ class CompaniesHouseConnector:
         https://developer-specs.company-information.service.gov.uk/companies-house-public-data-api/reference/search/search-officers
         """
         parameters = _build_query_parameters(
-            q=q, items_per_page=items_per_page, start_index=start_index
+            q=q,
+            items_per_page=items_per_page,
+            start_index=start_index,
         )
         endpoint = f"search/officers{parameters}"
         return requests.request(
-            method="GET", url=self.base_url + endpoint, headers=self.request_headers
+            method="GET",
+            url=self.base_url + endpoint,
+            headers=self.request_headers,
         )
-
-
-def main() -> None:
-    """
-    Manually test the API client.
-    """
-    conn = CompaniesHouseConnector()
-    company_number = model.CompanyNumber("7706156")
-
-    # Check the headers
-    # print(os.environ["COMPANIES_HOUSE_API_KEY"])
-    # print(conn.request_headers)
-
-    # Test the error message
-    # model.CompanyNumber("BROKEN")
-
-    # Test getting the company profile
-    print(conn.get_company_profile(company_number).text)
-
-    # Test getting the company officers
-    print(conn.get_company_officers(company_number).text)
-
-    # Test the company search
-    print(conn.search_company(q="Allica", items_per_page=2).text)
-
-    # Test the officer search
-    print(conn.search_officers(q="John", items_per_page=2).text)
-
-    # Test the search
-    print(conn.search(q="John", items_per_page=10).text)
-
-
-if __name__ == "__main__":
-    main()
