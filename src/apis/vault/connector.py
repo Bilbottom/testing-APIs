@@ -4,11 +4,6 @@ API clients for HashiCorp Vault.
 
 import requests
 import json
-import os
-
-import dotenv
-
-dotenv.load_dotenv()
 
 
 class VaultConnector:
@@ -16,50 +11,32 @@ class VaultConnector:
     Bridge class for the HashiCorp Vault REST API.
     """
 
-    def __init__(self):
-        """
-        Create the connector.
-        """
-        self.base_url = "https://vault.prod.jaja.finance:8200/v1/"
-        self._api_key = os.getenv("KEY")
-        self._api_secret = os.getenv("SECRET")
-
-        self._auth_token = None
-        sign_in_response = self.sign_in()
-        self._auth_token = json.loads(sign_in_response.text)["auth"]["client_token"]
-
-    @property
-    def auth_token(self) -> str:
-        """Make auth_type immutable"""
-        return self._auth_token
+    def __init__(self, domain: str, api_key: str, api_secret: str):
+        self.base_url = f"https://{domain}/v1/"
+        self.api_key = api_key
+        self.api_secret = api_secret
+        self.auth_token = json.loads(self.sign_in().text)["auth"]["client_token"]
 
     @property
     def request_headers(self) -> dict:
         """
         Default request headers.
         """
-        if self.auth_token is None:
-            return {
-                "Content-Type": "application/json",
-                "Accept": "application/json",
-            }
-        else:
-            return {
-                "Content-Type": "application/json",
-                "Accept": "application/json",
-                "X-Vault-Token": self.auth_token,
-            }
-
-    def sign_in_userpass(self) -> requests.Response:
-        """
-        https://www.vaultproject.io/api-docs/auth/userpass
-
-        We use LDAP rather than Username & Password.
-        """
-        endpoint = f"auth/userpass/login/{self._api_key}"
-        body = {
-            "password": self._api_secret,
+        headers = {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
         }
+        if t := getattr(self, "auth_token", None):
+            headers["X-Vault-Token"] = t
+
+        return headers
+
+    def sign_in(self) -> requests.Response:
+        """
+        https://www.vaultproject.io/api-docs/auth/ldap
+        """
+        endpoint = f"auth/ldap/login/{self.api_key}"
+        body = {"password": self.api_secret}
         return requests.request(
             method="POST",
             url=self.base_url + endpoint,
@@ -67,14 +44,14 @@ class VaultConnector:
             data=json.dumps(body),
         )
 
-    def sign_in(self) -> requests.Response:
+    def sign_in_userpass(self) -> requests.Response:
         """
-        https://www.vaultproject.io/api-docs/auth/ldap
+        Sign in using LDAP rather than Username & Password.
+
+        https://www.vaultproject.io/api-docs/auth/userpass
         """
-        endpoint = f"auth/ldap/login/{self._api_key}"
-        body = {
-            "password": self._api_secret,
-        }
+        endpoint = f"auth/userpass/login/{self.api_key}"
+        body = {"password": self.api_secret}
         return requests.request(
             method="POST",
             url=self.base_url + endpoint,
