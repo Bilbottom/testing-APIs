@@ -3,16 +3,6 @@ API clients for Twilio.
 """
 
 import requests
-import os
-
-import dotenv
-
-dotenv.load_dotenv()
-
-
-###
-# https://stackoverflow.com/questions/26745462/how-do-i-use-basic-http-authentication-with-the-python-requests-library
-###
 
 
 class TwilioConnector:
@@ -20,14 +10,9 @@ class TwilioConnector:
     Bridge class for the Twilio REST API.
     """
 
-    def __init__(self):
-        """
-        Create the connector.
-        """
-        self.base_url = (
-            f"https://taskrouter.twilio.com/v1/Workspaces/{os.getenv('WORKSPACE')}/"
-        )
-        self._auth = (os.getenv("KEY"), os.getenv("SECRET"))
+    def __init__(self, workspace: str, api_key: str, api_secret: str):
+        self.base_url = f"https://taskrouter.twilio.com/v1/Workspaces/{workspace}/"
+        self.auth = (api_key, api_secret)
 
     @property
     def request_headers(self) -> dict:
@@ -38,11 +23,6 @@ class TwilioConnector:
             "Content-Type": "application/json",
             "Accept": "application/json",
         }
-
-    @property
-    def auth(self) -> tuple:
-        """Make auth immutable"""
-        return self._auth
 
     def list_all_events(
         self,

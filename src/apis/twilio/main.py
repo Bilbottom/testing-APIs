@@ -2,15 +2,25 @@
 Manual testing for the API clients.
 """
 
+import os
+
+import dotenv
+
 import src.utils
 from src.apis import twilio
+
+dotenv.load_dotenv()
 
 
 def main():
     """
     Manually test the API client.
     """
-    twilio_connector = twilio.TwilioConnector()
+    twilio_connector = twilio.TwilioConnector(
+        workspace=os.getenv("TWILIO__WORKSPACE"),
+        api_key=os.getenv("TWILIO__API_KEY"),
+        api_secret=os.getenv("TWILIO__API_SECRET"),
+    )
 
     src.utils.pprint(
         twilio_connector.list_all_events(
