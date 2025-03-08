@@ -3,8 +3,9 @@ API clients for Braze.
 """
 
 import enum
-import requests
 import json
+
+import requests
 
 
 class Brand(enum.StrEnum):

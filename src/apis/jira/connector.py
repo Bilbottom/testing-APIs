@@ -12,9 +12,9 @@ See the following documentation:
 """
 
 import base64
+import json
 
 import requests
-import json
 
 
 class JiraConnector:
