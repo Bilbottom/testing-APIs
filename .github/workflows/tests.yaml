@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+---
+name: Tests
+run-name: Tests 🧪
+
+on:
+  workflow_dispatch:
+  pull_request:
+
+jobs:
+  tests:
+    runs-on: windows-latest
+    steps:
+      - name: 🛎️ Check out repository
+        uses: actions/checkout@v4
+
+      - name: 🐍 Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.11
+
+      - name: 🔨 Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: ✅ Run unit tests
+        run: python -m pytest -vvv

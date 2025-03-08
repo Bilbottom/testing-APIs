@@ -1,0 +1,9 @@
+{
+  actor {
+    account(id: {{account_id}}) {
+      nrql(query: "{{query}}") {
+        results
+      }
+    }
+  }
+}
