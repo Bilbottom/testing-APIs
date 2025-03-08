@@ -17,6 +17,9 @@ def to_param_string(
         if keep_all or (value is not None and not keep_all)
     }
 
+    # TODO: add URL encoding
+    # urllib.parse.urlencode(params_)
+
     return "?" + "&".join([f"{key}={value}" for key, value in params_.items()])
 
 

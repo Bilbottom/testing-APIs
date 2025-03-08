@@ -2,7 +2,6 @@
 Manual testing for the API clients.
 """
 
-import json
 import os
 
 import dotenv
@@ -19,8 +18,7 @@ def list_databases(mb_connector: metabase.MetabaseConnector) -> None:
     """
     List all databases defined in Metabase.
     """
-    databases = json.loads(mb_connector.get_databases().json())
-    for db in databases["data"]:
+    for db in mb_connector.get_databases().json()["data"]:
         utils.pprint(db)
         print(db["id"], db["name"], db["updated_at"])
 
