@@ -16,7 +16,7 @@ class VaultConnector:
         self.base_url = f"https://{domain}/v1/"
         self.api_key = api_key
         self.api_secret = api_secret
-        self.auth_token = json.loads(self.sign_in().text)["auth"]["client_token"]
+        self.auth_token = self.sign_in().json()["auth"]["client_token"]
 
     @property
     def request_headers(self) -> dict:

@@ -27,7 +27,7 @@ class MetabaseConnector:
         self.__auth_token = None
 
         sign_in_response = self.sign_in()
-        self.__auth_token = json.loads(sign_in_response.text)["id"]
+        self.__auth_token = sign_in_response.json()["id"]
 
     @property
     def auth_token(self) -> str:

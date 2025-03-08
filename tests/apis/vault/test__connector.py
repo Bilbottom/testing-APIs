@@ -1,5 +1,4 @@
 import dataclasses
-import json
 from types import SimpleNamespace
 
 import pytest
@@ -7,7 +6,7 @@ import pytest
 from src.apis.vault import connector
 
 BASE_URL = "https://vault.test/v1/"
-MOCK_SIGN_IN_RESPONSE = json.dumps({"auth": {"client_token": "a1b2-c3d4"}})
+MOCK_SIGN_IN_RESPONSE = {"auth": {"client_token": "a1b2-c3d4"}}
 
 
 @dataclasses.dataclass
@@ -30,7 +29,7 @@ def connection(monkeypatch: pytest.MonkeyPatch) -> connector.VaultConnector:
     monkeypatch.setattr(
         connector.VaultConnector,
         "sign_in",
-        lambda _: SimpleNamespace(text=MOCK_SIGN_IN_RESPONSE),
+        lambda _: SimpleNamespace(json=lambda: MOCK_SIGN_IN_RESPONSE),
     )
     creds = Credentials.default()
     return connector.VaultConnector(

@@ -28,7 +28,7 @@ def connection(monkeypatch: pytest.MonkeyPatch) -> connector.MetabaseConnector:
     monkeypatch.setattr(
         connector.MetabaseConnector,
         "sign_in",
-        lambda _: SimpleNamespace(text='{"id": "a1b2-c3d4"}'),
+        lambda _: SimpleNamespace(json=lambda: {"id": "a1b2-c3d4"}),
     )
     creds = Credentials.default()
     return connector.MetabaseConnector(

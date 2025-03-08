@@ -39,7 +39,7 @@ class TableauConnector:
         self.auth_type = _parse_auth(auth_type)
         # self.auth_token = None
 
-        creds = json.loads(self.sign_in().text)["credentials"]
+        creds = self.sign_in().json()["credentials"]
         self.auth_token = creds["token"]
         self.site_id = creds["site"]["id"]
         self.user_id = creds["user"]["id"]

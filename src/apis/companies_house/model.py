@@ -3,7 +3,6 @@ Domain objects for working with the Companies House API.
 """
 
 import enum
-import json
 import re
 from typing import Protocol
 
@@ -115,7 +114,7 @@ class Company:
             )
             if company_profile.status_code == 404:
                 raise ValueError(f"Company number {self.company_number} not found")
-            self._company_profile = json.loads(company_profile.text)
+            self._company_profile = company_profile.json()
         return self._company_profile
 
     def get_company_officers(
@@ -131,20 +130,16 @@ class Company:
         if force_update or self._company_officers is None:
             enumerated_items = 0
             self._company_officers = []
-            total_items = json.loads(
-                self._connector.get_company_officers(
-                    company_number=self.company_number,
-                    items_per_page=1,
-                ).text
-            )["total_results"]
+            total_items = self._connector.get_company_officers(
+                company_number=self.company_number,
+                items_per_page=1,
+            ).json()["total_results"]
             while enumerated_items < total_items:
-                self._company_officers += json.loads(
-                    self._connector.get_company_officers(
-                        company_number=self.company_number,
-                        items_per_page=page_size,
-                        start_index=enumerated_items,
-                    ).text
-                )["items"]
+                self._company_officers += self._connector.get_company_officers(
+                    company_number=self.company_number,
+                    items_per_page=page_size,
+                    start_index=enumerated_items,
+                ).json()["items"]
                 enumerated_items += page_size
             for officer in self._company_officers:
                 appointments = officer["links"]["officer"]["appointments"]

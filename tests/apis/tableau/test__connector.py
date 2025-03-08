@@ -1,5 +1,4 @@
 import dataclasses
-import json
 from types import SimpleNamespace
 
 import pytest
@@ -7,19 +6,17 @@ import pytest
 from src.apis.tableau import connector
 
 BASE_URL = "https://tableau.test/api/3.8/"
-MOCK_SIGN_IN_RESPONSE = json.dumps(
-    {
-        "credentials": {
-            "token": "a1b2-c3d4",
-            "site": {
-                "id": "site-id",
-            },
-            "user": {
-                "id": "user-id",
-            },
+MOCK_SIGN_IN_RESPONSE = {
+    "credentials": {
+        "token": "a1b2-c3d4",
+        "site": {
+            "id": "site-id",
         },
-    }
-)
+        "user": {
+            "id": "user-id",
+        },
+    },
+}
 
 
 @dataclasses.dataclass
@@ -44,7 +41,7 @@ def connection(monkeypatch: pytest.MonkeyPatch) -> connector.TableauConnector:
     monkeypatch.setattr(
         connector.TableauConnector,
         "sign_in",
-        lambda _: SimpleNamespace(text=MOCK_SIGN_IN_RESPONSE),
+        lambda _: SimpleNamespace(json=lambda: MOCK_SIGN_IN_RESPONSE),
     )
     creds = Credentials.default()
     return connector.TableauConnector(
