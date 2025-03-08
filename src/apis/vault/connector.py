@@ -2,8 +2,9 @@
 API clients for HashiCorp Vault.
 """
 
-import requests
 import json
+
+import requests
 
 
 class VaultConnector:

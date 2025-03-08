@@ -12,12 +12,12 @@ Arguments expected are, in order:
 https://community.atlassian.com/t5/Jira-questions/What-is-the-simplest-way-to-connect-to-Tempo-API/qaq-p/1280418
 """
 
-import requests
 import json
 import sys
 import os
 
 import dotenv
+import requests
 
 dotenv.load_dotenv()
 
