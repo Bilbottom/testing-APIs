@@ -6,7 +6,7 @@ import os
 
 import dotenv
 
-import src.utils
+from src import utils
 from src.apis import notion
 
 dotenv.load_dotenv()
@@ -19,7 +19,7 @@ def main() -> None:
     notion_connector = notion.NotionConnector(
         api_token=os.getenv("NOTION__API_TOKEN"),
     )
-    src.utils.pprint(notion_connector.get_users().text)
+    utils.pprint(notion_connector.get_users().json())
 
 
 if __name__ == "__main__":

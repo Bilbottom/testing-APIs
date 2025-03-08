@@ -6,7 +6,7 @@ import os
 
 import dotenv
 
-import src.utils
+from src import utils
 from src.apis import braze
 
 dotenv.load_dotenv()
@@ -32,7 +32,7 @@ def main() -> None:
     )
 
     # Campaign list
-    src.utils.pprint(braze_connector.get_campaigns_list().text)
+    utils.pprint(braze_connector.get_campaigns_list().text)
 
     # User Export by Identifier
     user_export_body = {
@@ -51,14 +51,14 @@ def main() -> None:
             "custom_events",
         ],
     }
-    src.utils.pprint(
-        braze_connector.user_profile_export_by_identifier(body=user_export_body).text
+    utils.pprint(
+        braze_connector.user_profile_export_by_identifier(body=user_export_body).json()
     )
 
     # User Export by Segment
     jaja_segment = "7a09f4c1-0f7a-4dfc-8dec-bba78c73d5c9"
-    src.utils.pprint(
-        braze_connector.user_profile_export_by_segment(segment_id=jaja_segment).text
+    utils.pprint(
+        braze_connector.user_profile_export_by_segment(segment_id=jaja_segment).json()
     )
 
 

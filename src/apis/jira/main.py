@@ -6,7 +6,7 @@ import os
 
 import dotenv
 
-import src.utils
+from src import utils
 from src.apis import jira
 
 dotenv.load_dotenv()
@@ -23,15 +23,15 @@ def main() -> None:
     )
     project_id = "10000"
 
-    src.utils.pprint(jira_connector.get_projects_paginated().text)
-    src.utils.pprint(jira_connector.get_issue(issue_key="DEV-67").text)
-    src.utils.pprint(jira_connector.get_project_components(project_id=project_id).text)
-    src.utils.pprint(
+    utils.pprint(jira_connector.get_projects_paginated().json())
+    utils.pprint(jira_connector.get_issue(issue_key="DEV-67").json())
+    utils.pprint(jira_connector.get_project_components(project_id=project_id).json())
+    utils.pprint(
         jira_connector.create_issue(
             project_id=project_id,
             summary="A test from the API",
             description="Some basic description",
-        ).text
+        ).json()
     )
 
 

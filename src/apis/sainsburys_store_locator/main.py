@@ -5,7 +5,7 @@ Manual testing for the API clients.
 import json
 import pathlib
 
-import src.utils
+from src import utils
 from src.apis.sainsburys_store_locator import StoreLocatorConnector
 
 # The public API is limited to 20 results per request
@@ -39,8 +39,8 @@ def main() -> None:
     """
     store_locator = StoreLocatorConnector()
 
-    src.utils.pprint(store_locator.get_stores().json())
-    src.utils.pprint(store_locator.get_store_by_id(store_id=2).json())
+    utils.pprint(store_locator.get_stores().json())
+    utils.pprint(store_locator.get_store_by_id(store_id=2).json())
 
     all_stores = get_all_stores(store_locator)
     print(len(all_stores))

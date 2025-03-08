@@ -4,6 +4,8 @@ API clients for Twilio.
 
 import requests
 
+from src import utils
+
 
 class TwilioConnector:
     """
@@ -34,9 +36,13 @@ class TwilioConnector:
 
         Dates must be a string in the ISO-8601 format, e.g. 2020-01-01T00:00:00Z
         """
-        endpoint = (
-            f"Events?StartDate={start_datetime}&EndDate={end_datetime}&PageSize=100"
-        )
+
+        params = {
+            "StartDate": start_datetime,
+            "EndDate": end_datetime,
+            "PageSize": 100,
+        }
+        endpoint = "Events?" + utils.to_param_string(params)
         return requests.request(
             method="GET",
             auth=self.auth,

@@ -6,9 +6,10 @@ import os
 
 import dotenv
 
+from src import utils
+
 # from src.apis.alteryx_gallery import alteryx_alt as connector
 from src.apis.alteryx_gallery import connector
-from src.utils import pprint
 
 dotenv.load_dotenv()
 
@@ -25,8 +26,8 @@ def main() -> None:
         api_key=os.getenv("ALTERYX_GALLERY__API_KEY"),
         api_secret=os.getenv("ALTERYX_GALLERY__API_SECRET"),
     )
-    pprint(conn.get_shared_credentials().text)
-    pprint(conn.enqueue(workflow_id=USAGE_REPORT_ID).text)
+    utils.pprint(conn.get_shared_credentials().json())
+    utils.pprint(conn.enqueue(workflow_id=USAGE_REPORT_ID).json())
 
 
 if __name__ == "__main__":

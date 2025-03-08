@@ -4,7 +4,7 @@ API clients for the Sainsbury's Store Locator.
 
 import requests
 
-import src.utils
+from src import utils
 
 BASE_URL = "https://api.stores.sainsburys.co.uk/v1/"
 
@@ -33,7 +33,7 @@ class StoreLocatorConnector:
         """
         endpoint = "stores"
         if params:
-            endpoint += "?" + src.utils.to_param_string(params)
+            endpoint += utils.to_param_string(params)
         return requests.request(
             method="GET",
             url=self.base_url + endpoint,

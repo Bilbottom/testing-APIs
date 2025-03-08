@@ -89,7 +89,10 @@ class JiraConnector:
         )
 
     def create_issue(
-        self, project_id: str, summary: str, description: str
+        self,
+        project_id: str,
+        summary: str,
+        description: str,
     ) -> requests.Response:
         """
         https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-issues/#api-rest-api-3-issue-post

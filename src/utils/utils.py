@@ -1,6 +1,23 @@
 import json
 
-from rich import print
+
+def to_param_string(
+    params: dict | None = None,
+    keep_all: bool = False,
+) -> str:
+    """
+    Convert a dictionary to a query string.
+    """
+    if not params:
+        return ""
+
+    params_ = {
+        key: value if value is not None else ""
+        for key, value in params.items()
+        if keep_all or (value is not None and not keep_all)
+    }
+
+    return "?" + "&".join([f"{key}={value}" for key, value in params_.items()])
 
 
 def pprint(text: str | dict, indent: int = 4) -> None:
@@ -27,9 +44,8 @@ def pprint(text: str | dict, indent: int = 4) -> None:
 def print_dict_types(dictionary: dict, level: int = 0) -> None:
     """
     Loop through a dict and print the keys and the value types.
-
-    List keys will be coloured red.
     """
+
     indent = level * "    "
     for key, value in dictionary.items():
         colour = "red" if isinstance(value, list) else "blue"
@@ -38,7 +54,7 @@ def print_dict_types(dictionary: dict, level: int = 0) -> None:
             print_dict_types(value, level=level + 1)
 
 
-def _json_schema_to_sql() -> None:
+def json_schema_to_sql() -> None:
     """
     Loop through a dict and convert to SQL column names with types.
     """

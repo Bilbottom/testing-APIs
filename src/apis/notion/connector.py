@@ -18,7 +18,7 @@ class NotionConnector:
         """
         self.base_url = "https://api.notion.com/v1/"
         self.notion_version = version
-        self._token = api_token
+        self.api_token = api_token
 
     @property
     def auth_basic(self) -> str:
@@ -27,7 +27,7 @@ class NotionConnector:
 
         - https://developers.notion.com/reference/authentication
         """
-        return f"Bearer {self._token}"
+        return f"Bearer {self.api_token}"
 
     @property
     def request_headers(self) -> dict:
@@ -46,7 +46,6 @@ class NotionConnector:
         https://developers.notion.com/reference/get-users
         """
         endpoint = "users"
-        print(self.base_url + endpoint)
         return requests.request(
             method="GET",
             url=self.base_url + endpoint,

@@ -1,6 +1,5 @@
 python-dotenv>=1.0.1
 requests>=2.32.0
-rich>=13.9.4
 
 # dev
 pre-commit

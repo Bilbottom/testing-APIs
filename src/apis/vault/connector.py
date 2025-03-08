@@ -94,7 +94,6 @@ class VaultConnector:
         )
 
     def read_secret(self, role_name: str) -> requests.Response:
-        """ """
         endpoint = f"database/static-creds/{role_name}"
         return requests.request(
             method="POST",
