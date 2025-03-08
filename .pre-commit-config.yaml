@@ -37,6 +37,7 @@ repos:
     hooks:
       - id: prettier
         name: Make code pretty
+        exclude: .*\.(nrql|graphql)
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.8.6
