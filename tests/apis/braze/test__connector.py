@@ -41,7 +41,9 @@ def test__invalid_brands_raise_an_error():
         )
 
 
-def test__connector_properties_are_correct(connection: connector.BrazeConnector):
+def test__connector_properties_are_correct(
+    connection: connector.BrazeConnector,
+):
     assert connection.base_url == BASE_URL
     assert connection.request_headers == {
         "Content-Type": "application/json",

@@ -33,7 +33,9 @@ def connection(monkeypatch: pytest.MonkeyPatch) -> connector.TwilioConnector:
     )
 
 
-def test__connector_properties_are_correct(connection: connector.TwilioConnector):
+def test__connector_properties_are_correct(
+    connection: connector.TwilioConnector,
+):
     assert connection.base_url == BASE_URL
     assert connection.auth == ("some-key", "some-secret")
     assert connection.request_headers == {

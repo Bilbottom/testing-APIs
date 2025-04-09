@@ -25,7 +25,9 @@ def main() -> None:
 
     utils.pprint(jira_connector.get_projects_paginated().json())
     utils.pprint(jira_connector.get_issue(issue_key="DEV-67").json())
-    utils.pprint(jira_connector.get_project_components(project_id=project_id).json())
+    utils.pprint(
+        jira_connector.get_project_components(project_id=project_id).json()
+    )
     utils.pprint(
         jira_connector.create_issue(
             project_id=project_id,

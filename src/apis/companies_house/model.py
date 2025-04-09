@@ -3,6 +3,7 @@ Domain objects for working with the Companies House API.
 """
 
 import enum
+import http
 import re
 from typing import Protocol
 
@@ -37,11 +38,15 @@ def _is_valid_company_number(company_number: str | int) -> bool:
     """
     Return whether a company number is valid.
     """
+    valid_length = 8
+
     if isinstance(company_number, str):
         length = len(company_number)
-        return length == 8 or (length < 8 and re.match(r"\D", company_number) is None)
+        return length == valid_length or (
+            length < valid_length and re.match(r"\D", company_number) is None
+        )
     if isinstance(company_number, int):
-        return company_number > 0 and len(str(company_number)) <= 8
+        return company_number > 0 and len(str(company_number)) <= valid_length
     return False
 
 
@@ -112,8 +117,10 @@ class Company:
             company_profile = self._connector.get_company_profile(
                 company_number=self.company_number,
             )
-            if company_profile.status_code == 404:
-                raise ValueError(f"Company number {self.company_number} not found")
+            if company_profile.status_code == http.HTTPStatus.NOT_FOUND:
+                raise ValueError(
+                    f"Company number {self.company_number} not found"
+                )
             self._company_profile = company_profile.json()
         return self._company_profile
 
@@ -144,7 +151,7 @@ class Company:
             for officer in self._company_officers:
                 appointments = officer["links"]["officer"]["appointments"]
                 # officer["id"] = appointments[10:-12]  # Not sure if it's always a specific position/length
-                officer["officer_id"] = appointments.replace("/officers/", "").replace(
-                    "/appointments", ""
-                )
+                for replacement in ["/officers/", "/appointments"]:
+                    appointments = appointments.replace(replacement, "")
+                officer["officer_id"] = appointments
         return self._company_officers

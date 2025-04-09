@@ -10,7 +10,9 @@ def connection(monkeypatch: pytest.MonkeyPatch) -> connector.NotionConnector:
     )
 
 
-def test__connector_properties_are_correct(connection: connector.NotionConnector):
+def test__connector_properties_are_correct(
+    connection: connector.NotionConnector,
+):
     assert connection.base_url == "https://api.notion.com/v1/"
     assert connection.notion_version == "2022-06-28"
     assert connection.request_headers == {

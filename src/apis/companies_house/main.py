@@ -40,14 +40,14 @@ def main() -> None:
         "foreign_company_details",
     ]
     disallowed_officer_properties = ["former_names"]
-    company_profile_json = allica_bank.get_company_profile()
-    company_officers_json = allica_bank.get_company_officers()
+    profile_json = allica_bank.get_company_profile()
+    officers_json = allica_bank.get_company_officers()
     with contextlib.suppress(KeyError):
-        [company_profile_json.pop(key) for key in disallowed_company_properties]
-        [company_officers_json.pop(key) for key in disallowed_officer_properties]
+        [profile_json.pop(key) for key in disallowed_company_properties]
+        [officers_json.pop(key) for key in disallowed_officer_properties]
 
-    _write_json(company_profile_json, f"data/{company_number}-profile.json")
-    _write_json(company_officers_json, f"data/{company_number}-officers.json")
+    _write_json(profile_json, f"data/{company_number}-profile.json")
+    _write_json(officers_json, f"data/{company_number}-officers.json")
 
 
 if __name__ == "__main__":

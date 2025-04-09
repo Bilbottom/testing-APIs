@@ -22,7 +22,9 @@ def _parse_auth(auth_type: str) -> TableauAuthType:
         return TableauAuthType(auth_type.lower().strip())
     except ValueError as e:
         auth_types = [f"'{k.value}'" for k in TableauAuthType]
-        raise ValueError(f"Auth type must be one of {', '.join(auth_types)}") from e
+        raise ValueError(
+            f"Auth type must be one of {', '.join(auth_types)}"
+        ) from e
 
 
 class TableauConnector:
@@ -131,11 +133,16 @@ class TableauConnector:
     ###
     # Data Sources Methods
     ###
-    def query_data_source_connections(self, datasource_id: str) -> requests.Response:
+    def query_data_source_connections(
+        self,
+        datasource_id: str,
+    ) -> requests.Response:
         """
         https://help.tableau.com/current/api/rest_api/en-us/REST/rest_api_ref_data_sources.htm#query_data_source_connections
         """
-        endpoint = f"sites/{self.site_id}/datasources/{datasource_id}/connections"
+        endpoint = (
+            f"sites/{self.site_id}/datasources/{datasource_id}/connections"
+        )
         return requests.request(
             method="GET",
             url=self.base_url + endpoint,
@@ -244,9 +251,7 @@ class TableauConnector:
         """
         https://help.tableau.com/current/api/rest_api/en-us/REST/rest_api_ref_workbooks_and_views.htm#query_workbooks_for_user
         """
-        endpoint = (
-            f"sites/{self.site_id}/users/{user_id}/workbooks?ownedBy=true&pageSize=1000"
-        )
+        endpoint = f"sites/{self.site_id}/users/{user_id}/workbooks?ownedBy=true&pageSize=1000"
         return requests.request(
             method="GET",
             url=self.base_url + endpoint,
@@ -264,9 +269,7 @@ class TableauConnector:
 
         Only set up to change the password.
         """
-        endpoint = (
-            f"sites/{self.site_id}/workbooks/{workbook_id}/connections/{connection_id}"
-        )
+        endpoint = f"sites/{self.site_id}/workbooks/{workbook_id}/connections/{connection_id}"
         body = {
             "connection": {
                 "password": new_password,
@@ -292,7 +295,11 @@ class TableauConnector:
             data="{}",
         )
 
-    def update_workbook(self, workbook_id: str, new_owner_id: str) -> requests.Response:
+    def update_workbook(
+        self,
+        workbook_id: str,
+        new_owner_id: str,
+    ) -> requests.Response:
         """
         https://help.tableau.com/current/api/rest_api/en-us/REST/rest_api_ref_workbooks_and_views.htm#update_workbook
 

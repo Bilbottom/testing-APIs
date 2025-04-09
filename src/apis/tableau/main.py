@@ -21,9 +21,8 @@ def change_objects_owner(tableau_connector: tableau.TableauConnector) -> None:
 
     # Change datasources owner
     # utils.pprint(tableau_connector.query_data_sources().text)
-    for datasource in tableau_connector.query_data_sources().json()["datasources"][
-        "datasource"
-    ]:
+    resp = tableau_connector.query_data_sources().json()
+    for datasource in resp["datasources"]["datasource"]:
         if datasource["owner"]["id"] == someone_id:
             # utils.pprint(data_source)
             utils.pprint(
@@ -34,9 +33,8 @@ def change_objects_owner(tableau_connector: tableau.TableauConnector) -> None:
             )
 
     # Change workbooks owner
-    for workbook in tableau_connector.query_workbooks_for_user(someone_id).json()[
-        "workbooks"
-    ]["workbook"]:
+    resp = tableau_connector.query_workbooks_for_user(someone_id).json()
+    for workbook in resp["workbooks"]["workbook"]:
         utils.pprint(
             tableau_connector.update_workbook(
                 workbook_id=workbook["id"],
@@ -45,26 +43,28 @@ def change_objects_owner(tableau_connector: tableau.TableauConnector) -> None:
         )
 
 
-def change_connection_passwords(tableau_connector: tableau.TableauConnector) -> None:
+def change_connection_passwords(
+    tableau_connector: tableau.TableauConnector,
+) -> None:
     """
     Change the password of database connections in Tableau.
     """
     new_password = "A1a-pB7F7jiP596ngMgj"
 
-    datasources = tableau_connector.query_data_sources().json()["datasources"][
-        "datasource"
-    ]
-    workbooks = tableau_connector.query_workbooks_for_site().json()["workbooks"][
-        "workbook"
-    ]
+    # fmt: off
+    datasources = tableau_connector.query_data_sources().json()["datasources"]["datasource"]
+    workbooks = tableau_connector.query_workbooks_for_site().json()["workbooks"]["workbook"]
+    # fmt: on
 
     # Update datasources
     for datasource in datasources:
         if datasource["type"] == "redshift":
             # utils.pprint(datasource)
-            connection_response = tableau_connector.query_data_source_connections(
-                datasource_id=datasource["id"]
-            ).json()
+            connection_response = (
+                tableau_connector.query_data_source_connections(
+                    datasource_id=datasource["id"]
+                ).json()
+            )
             # utils.pprint(connection_response)
             connections = connection_response["connections"]["connection"]
             for connection in connections:
@@ -86,7 +86,10 @@ def change_connection_passwords(tableau_connector: tableau.TableauConnector) -> 
         # utils.pprint(connection_response)
         connections = connection_response["connections"]["connection"]
         for connection in connections:
-            if connection["type"] == "redshift" and connection["userName"] == "tableau":
+            if (
+                connection["type"] == "redshift"
+                and connection["userName"] == "tableau"
+            ):
                 utils.pprint(
                     tableau_connector.update_workbook_connection(
                         workbook_id=workbook["id"],
@@ -101,7 +104,9 @@ def get_user_email_list(tableau_connector: tableau.TableauConnector) -> None:
     Get the emails for the licensed users in the server.
     """
     users = tableau_connector.get_users_on_site().json()["users"]["user"]
-    emails = [user["email"] for user in users if user["siteRole"] != "Unlicensed"]
+    emails = [
+        user["email"] for user in users if user["siteRole"] != "Unlicensed"
+    ]
     utils.pprint(emails)  # type: ignore
 
 
@@ -122,7 +127,9 @@ def main() -> None:
     utils.pprint(tableau_connector.query_data_sources().text)
     utils.pprint(tableau_connector.query_workbooks_for_site().text)
     utils.pprint(
-        tableau_connector.query_workbook_connections(agency_payments_workbook_id).text
+        tableau_connector.query_workbook_connections(
+            agency_payments_workbook_id
+        ).text
     )
 
     utils.pprint(tableau_connector.get_users_on_site().text)

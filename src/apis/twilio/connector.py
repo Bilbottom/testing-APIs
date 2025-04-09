@@ -13,7 +13,9 @@ class TwilioConnector:
     """
 
     def __init__(self, workspace: str, api_key: str, api_secret: str):
-        self.base_url = f"https://taskrouter.twilio.com/v1/Workspaces/{workspace}/"
+        self.base_url = (
+            f"https://taskrouter.twilio.com/v1/Workspaces/{workspace}/"
+        )
         self.auth = (api_key, api_secret)
 
     @property

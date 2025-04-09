@@ -16,13 +16,23 @@ def main() -> None:
     utils.pprint(tfl_connector.get_air_quality().json())
 
     utils.pprint(tfl_connector.get_bike_points().json())
-    utils.pprint(tfl_connector.get_bike_points(bike_point_id="BikePoints_608").json())
+    utils.pprint(
+        tfl_connector.get_bike_points(bike_point_id="BikePoints_608").json()
+    )
     utils.pprint(tfl_connector.get_bike_points(query="Holborn").json())
 
     # These were returning HTML?!
     print(tfl_connector.get_crowding(naptan="940GZZLUBST").text)
-    print(tfl_connector.get_crowding(naptan="940GZZLUBST", day_of_week="Live").text)
-    print(tfl_connector.get_crowding(naptan="940GZZLUBST", day_of_week="Monday").text)
+    print(
+        tfl_connector.get_crowding(
+            naptan="940GZZLUBST", day_of_week="Live"
+        ).text
+    )
+    print(
+        tfl_connector.get_crowding(
+            naptan="940GZZLUBST", day_of_week="Monday"
+        ).text
+    )
 
     utils.pprint(tfl_connector.get_journey().json())
     utils.pprint(tfl_connector.get_journey(meta=True).json())

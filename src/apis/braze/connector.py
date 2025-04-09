@@ -55,7 +55,10 @@ class BrazeConnector:
             headers=self.request_headers,
         )
 
-    def user_profile_export_by_identifier(self, body: dict) -> requests.Response:
+    def user_profile_export_by_identifier(
+        self,
+        body: dict,
+    ) -> requests.Response:
         """
         https://www.braze.com/docs/api/endpoints/export/user_data/post_users_identifier/
         """
@@ -67,7 +70,10 @@ class BrazeConnector:
             data=json.dumps(body),
         )
 
-    def user_profile_export_by_segment(self, segment_id: str) -> requests.Response:
+    def user_profile_export_by_segment(
+        self,
+        segment_id: str,
+    ) -> requests.Response:
         """
         https://www.braze.com/docs/api/endpoints/export/user_data/post_users_segment/
         """

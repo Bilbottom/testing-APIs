@@ -37,7 +37,7 @@ class JiraConnector:
         return (
             "Basic "
             + base64.b64encode(
-                f"{self._api_key}:{self._api_secret}".encode("UTF-8")
+                f"{self._api_key}:{self._api_secret}".encode()
             ).decode()
         )
 
@@ -122,7 +122,9 @@ class JiraConnector:
                         "content": [
                             {
                                 "type": "paragraph",
-                                "content": [{"text": description, "type": "text"}],
+                                "content": [
+                                    {"text": description, "type": "text"}
+                                ],
                             }
                         ],
                     },

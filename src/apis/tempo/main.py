@@ -13,8 +13,8 @@ https://community.atlassian.com/t5/Jira-questions/What-is-the-simplest-way-to-co
 """
 
 import json
-import sys
 import os
+import sys
 
 import dotenv
 import requests
@@ -87,8 +87,11 @@ def main(
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 6:
-        raise ValueError("There was an error retrieving the latest task details.")
+    required_args = 6
+    if len(sys.argv) != required_args:
+        raise ValueError(
+            "There was an error retrieving the latest task details."
+        )
 
     main(
         issue_key=sys.argv[1],

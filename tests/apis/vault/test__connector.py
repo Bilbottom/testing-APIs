@@ -48,7 +48,9 @@ def test__invalid_auth_type_raise_an_error():
         )
 
 
-def test__connector_properties_are_correct(connection: connector.VaultConnector):
+def test__connector_properties_are_correct(
+    connection: connector.VaultConnector,
+):
     assert connection.base_url == BASE_URL
     assert connection.request_headers == {
         "Content-Type": "application/json",

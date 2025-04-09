@@ -24,7 +24,7 @@ class GalleryConnector:
     @property
     def oauth_timestamp(self) -> str:
         """Example: 1637748738"""
-        return str(int(math.floor(time.time())))
+        return str(math.floor(time.time()))
 
     @property
     def oauth_signature_method(self) -> str:
