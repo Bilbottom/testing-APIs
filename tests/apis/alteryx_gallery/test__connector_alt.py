@@ -32,7 +32,9 @@ class MockClient:
     def sign(self, url: str):
         return [
             f"{self},{url}",
-            {"Authorization": 'oauth_signature="4N06lp4cYi07HOB4k0kjd3xJLjo%3D"'},
+            {
+                "Authorization": 'oauth_signature="4N06lp4cYi07HOB4k0kjd3xJLjo%3D"'
+            },
         ]
 
 

@@ -13,7 +13,9 @@ def connection() -> connector.SlackConnector:
     return connector.SlackConnector(WEBHOOK_URL)
 
 
-def test__connector_properties_are_correct(connection: connector.SlackConnector):
+def test__connector_properties_are_correct(
+    connection: connector.SlackConnector,
+):
     assert connection.webhook_url == WEBHOOK_URL
 
 

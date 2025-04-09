@@ -48,7 +48,7 @@ class CompaniesHouseConnector:
 
         https://developer-specs.company-information.service.gov.uk/guides/authorisation
         """
-        return "Basic " + base64.b64encode(f"{self.api_key}:".encode("UTF-8")).decode()
+        return "Basic " + base64.b64encode(f"{self.api_key}:".encode()).decode()
 
     @property
     def request_headers(self) -> dict:

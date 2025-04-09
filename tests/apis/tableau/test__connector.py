@@ -62,9 +62,13 @@ def test__invalid_auth_type_raise_an_error():
         )
 
 
-def test__connector_properties_are_correct(connection: connector.TableauConnector):
+def test__connector_properties_are_correct(
+    connection: connector.TableauConnector,
+):
     assert connection.base_url == BASE_URL
-    assert connection.auth_type == connector.TableauAuthType.USERNAME_AND_PASSWORD
+    assert (
+        connection.auth_type == connector.TableauAuthType.USERNAME_AND_PASSWORD
+    )
     assert connection.credentials == {
         "name": "some-key",
         "password": "some-secret",

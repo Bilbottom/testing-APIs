@@ -6,7 +6,9 @@ from src.apis.companies_house import connector
 
 
 @pytest.fixture
-def connection(monkeypatch: pytest.MonkeyPatch) -> connector.CompaniesHouseConnector:
+def connection(
+    monkeypatch: pytest.MonkeyPatch,
+) -> connector.CompaniesHouseConnector:
     return connector.CompaniesHouseConnector(api_key="a1b2-c3d4")
 
 
@@ -32,7 +34,9 @@ def test__search_parameters_are_built_correctly(
         request_data["url"] = url
         request_data["headers"] = headers
 
-    monkeypatch.setattr(connector, "requests", SimpleNamespace(request=mock_request))
+    monkeypatch.setattr(
+        connector, "requests", SimpleNamespace(request=mock_request)
+    )
     connection.search(q="Company Name", items_per_page=10)
 
     assert request_data["method"] == "GET"

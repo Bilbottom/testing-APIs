@@ -38,7 +38,9 @@ def connection(monkeypatch: pytest.MonkeyPatch) -> connector.MetabaseConnector:
     )
 
 
-def test__connector_properties_are_correct(connection: connector.MetabaseConnector):
+def test__connector_properties_are_correct(
+    connection: connector.MetabaseConnector,
+):
     assert connection.base_url == BASE_URL
     assert connection.request_headers == {
         "Content-Type": "application/json",

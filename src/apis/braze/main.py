@@ -52,13 +52,17 @@ def main() -> None:
         ],
     }
     utils.pprint(
-        braze_connector.user_profile_export_by_identifier(body=user_export_body).json()
+        braze_connector.user_profile_export_by_identifier(
+            body=user_export_body
+        ).json()
     )
 
     # User Export by Segment
     jaja_segment = "7a09f4c1-0f7a-4dfc-8dec-bba78c73d5c9"
     utils.pprint(
-        braze_connector.user_profile_export_by_segment(segment_id=jaja_segment).json()
+        braze_connector.user_profile_export_by_segment(
+            segment_id=jaja_segment
+        ).json()
     )
 
 

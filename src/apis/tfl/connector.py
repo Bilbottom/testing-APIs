@@ -58,7 +58,9 @@ class TFLConnector:
         https://api-portal.tfl.gov.uk/api-details#api=BikePoint
         """
         if bike_point_id and query:
-            raise ValueError("Only one of 'bike_point_id' or 'query' can be provided.")
+            raise ValueError(
+                "Only one of 'bike_point_id' or 'query' can be provided."
+            )
 
         endpoint = "BikePoint"
         if bike_point_id:
@@ -115,7 +117,10 @@ class TFLConnector:
         self,
         from_: str,
         to: str,
-        journey_planner_search_params: model.JourneyPlannerSearchParams | None = None,
+        # fmt: off
+        journey_planner_search_params: model.JourneyPlannerSearchParams
+        | None = None,
+        # fmt: on
     ) -> requests.Response:
         """
         https://api-portal.tfl.gov.uk/api-details#api=Journey

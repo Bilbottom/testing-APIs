@@ -39,12 +39,16 @@ class TableauUser:
         """Example method to test the class"""
         with self.server.auth.sign_in(self._auth):
             all_datasources, pagination_item = self.server.datasources.get()
-            print(f"\nThere are {pagination_item.total_available} datasources on site:")
+            print(
+                f"\nThere are {pagination_item.total_available} datasources on site:"
+            )
             print([datasource.name for datasource in all_datasources])
 
     def list_workbooks(self):
         """Example method to test the class"""
         with self.server.auth.sign_in(self._auth):
             all_workbooks, pagination_item = self.server.workbooks.get()
-            print(f"\nThere are {pagination_item.total_available} workbooks on site:")
+            print(
+                f"\nThere are {pagination_item.total_available} workbooks on site:"
+            )
             print([workbook.name for workbook in all_workbooks])
